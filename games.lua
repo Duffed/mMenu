@@ -12,6 +12,9 @@ gamemenu:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
 })
 gamemenu:SetBackdropColor(0,0,0,1)
 gamemenu:SetBackdropBorderColor(.2,.2,.2,1)
+if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then
+	TukuiDB.CreateShadow(gamemenu)
+end
 if mmconfig.menudirection == true then
 	gamemenu:SetPoint("TOP", menu, "BOTTOM", 0, -4)
 else
@@ -30,13 +33,13 @@ local function gamesetpoint(f)
 		if mmenugames == 0 then
 			f:SetPoint("TOP", gamemenu, "TOP", 0, -2)
 		else
-			f:SetPoint("TOP", gamemenu, "TOP", 0, -((mmenugames * mmconfig.addonbuttonheight) + 2 + (mmenugames*3)))
+			f:SetPoint("TOP", gamemenu, "TOP", 0, -((mmenugames * mmconfig.addonbuttonheight) + 2 + (mmenugames*2)))
 		end
 	else
 		if mmenugames == 0 then
 			f:SetPoint("BOTTOM", gamemenu, "BOTTOM", 0, 2)
 		else
-			f:SetPoint("BOTTOM", gamemenu, "BOTTOM", 0, ((mmenugames * mmconfig.addonbuttonheight) + 2 + (mmenugames*3)))
+			f:SetPoint("BOTTOM", gamemenu, "BOTTOM", 0, ((mmenugames * mmconfig.addonbuttonheight) + 2 + (mmenugames*2)))
 		end
 	end
 end
@@ -105,24 +108,11 @@ if IsAddOnLoaded("Bejeweled") then
 	mmenugames = mmenugames + 1
 end
 
---[[ testbutton
-	test = CreateFrame("Frame", "test", gamemenu)
-	CreateAddonButton(test)
-	test.text:SetText(mmconfig.textcolor.."test|r")
-	
-	--position
-	gamesetpoint(test)
-	
-	mmenugames = mmenugames + 1
-]]
-
-
 -- hide gamemenu if there are no ..
-gamemenu:SetHeight((mmenugames * mmconfig.addonbuttonheight) + (mmenugames * 3) +1)
+gamemenu:SetHeight((mmenugames * mmconfig.addonbuttonheight) + (mmenugames * 2) +2)
 gamemenu:SetWidth(mmconfig.addonbuttonwidth + 4)
 
-if gamemenu:GetHeight() < mmconfig.addonbuttonheight then
-gamemenu:Hide() end
+if gamemenu:GetHeight() < mmconfig.addonbuttonheight then gamemenu:Hide() end
 
 AddOn:UnregisterEvent("PLAYER_ENTERING_WORLD") -- UnregisterEvent so it just loads on first start
 end -- function login end

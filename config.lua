@@ -7,7 +7,7 @@
 mmconfig = {
 	menudirection = true,							-- true = menu below the "m" button
 													-- false = menu above the "m" button
-	hideonclick = true,								-- Hide the menu after clicking a button
+	hideonclick = true,								-- Hide the menu after clicking a button (hold shift to not hide the menu)
 
 	buttonwidth = 20,								-- "m"enu Button Width	(better use an even number)
 	buttonheight = 20,								-- "m"enu Button Height	(better use an even number)
@@ -145,6 +145,7 @@ if ( mmconfig.tukuisupport ) then
 		
 		mmconfig.hideopen = true
 		mmconfig.hideclose = true
+		mmconfig.menudirection = false
 	end
 end
 

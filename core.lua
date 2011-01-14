@@ -157,7 +157,11 @@ function CreateAddonButton(f)
 	end
 	
 	if mmconfig.hideonclick == true then
-		f:SetScript("OnMouseUp", function() menu:Hide() end)
+		f:SetScript("OnMouseUp", function()
+			if not IsShiftKeyDown() then
+				menu:Hide()
+			end
+		end)
 	end
 	
 	f.text = f:CreateFontString(nil, "LOW")
