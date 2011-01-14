@@ -7,12 +7,13 @@
 mmconfig = {
 	menudirection = true,							-- true = menu below the "m" button
 													-- false = menu above the "m" button
-													
+	hideonclick = true,								-- Hide the menu after clicking a button
+
 	buttonwidth = 20,								-- "m"enu Button Width	(better use an even number)
 	buttonheight = 20,								-- "m"enu Button Height	(better use an even number)
 
 	addonbuttonwidth = 110,							-- Addons-Button Width
-	addonbuttonheight = 19,							-- Addons-Button Height
+	addonbuttonheight = 20,							-- Addons-Button Height
 
 	fontheight = 11,								-- Fontsize
 	font = "Interface\\AddOns\\mmenu\\font.ttf",	-- Font
@@ -29,7 +30,7 @@ mmconfig = {
 	
 	fadetime = 0.25,     							-- Fade In or Out Time (in seconds) 0 = no fading
 
-	tukuisupport = true,							-- Tukui Color Support? true/false
+	tukuisupport = true,							-- Tukui support for colors & datatext (["mmenu"])
 	WIMSupport = true,								-- WIM support?
 
 	mList = {										-- Manage which Addons will be listed in the "m"enu
@@ -46,6 +47,7 @@ mmconfig = {
 		Cascade = true,
 		TukuiConfig = true,
 		ReloadUI = true,
+		Raidmarkbar = true,
 	},
 	
 	hideopen = false,								-- Hide the "O"pen all Button?
@@ -62,6 +64,7 @@ mmconfig = {
 		Atlas = false,
 		Cascade = true,
 		TukuiConfig = false,
+		Raidmarkbar = false,
 	},
 
 	hideclose = false,								-- Hide the "C"lose all Button?
@@ -78,6 +81,7 @@ mmconfig = {
 		Atlas = true,
 		Cascade = true,
 		TukuiConfig = true,
+		Raidmarkbar = false,
 	},
 }
 if UnitName("player") == "Duffed" or UnitName("player") == "Suq" or UnitName("player") == "Sappy" or UnitName("player") == "Gawk" or UnitName("player") == "Sacerdus" then mmconfig.hideopen = true mmconfig.hideclose = true mmconfig.menudirection = false mmconfig.buttonheight = ActionBar3Background:GetHeight() mmconfig.buttonwidth = 7 end
@@ -111,38 +115,70 @@ if ( mmconfig.tukuisupport ) then
 		end
 	end
 	-- Dunno how to check other edits without a specific Addon like "eTukui_Arena_Layout" 
+	
+	-- Datatext Button
+	if TukuiCF["datatext"].mmenu and TukuiCF["datatext"].mmenu > 0 and IsAddOnLoaded("Tukui") then
+		local Stat = CreateFrame("Frame", "mmdatatextbutton", TukuiInfoLeft)
+		Stat:EnableMouse(true)
+		
+		local Text = Stat:CreateFontString(nil, "LOW")
+		Text:SetFont(TukuiCF.media.font, TukuiCF["datatext"].fontsize)
+		Text:SetText(mmconfig.textcolorclicked.."m|r"..mmconfig.textcolor.."Menu|r")
+		TukuiDB.PP(TukuiCF["datatext"].mmenu, Text)
+		Stat:SetAllPoints(Text)
+		
+		Stat:SetScript("OnMouseDown", function()
+			if menu:IsShown() then
+				menu:Hide()
+			else
+				menu:Show()
+				UIFrameFadeIn(menu, mmconfig.fadetime, 0, 1)
+			end
+		end)
+		
+		Stat:SetScript("OnEnter", function()
+			Text:SetText(mmconfig.textcolorclicked.."mMenu|r")
+		end)
+		Stat:SetScript("OnLeave", function()
+			Text:SetText(mmconfig.textcolorclicked.."m|r"..mmconfig.textcolor.."Menu|r")
+		end)
+		
+		mmconfig.hideopen = true
+		mmconfig.hideclose = true
+	end
 end
+
+
 
 --------------------------------------------------------------------------------------
 -- Classcolor
 --------------------------------------------------------------------------------------
 if (mmconfig.classcolor) then
-		-- this code is copied out of the Tukui Forum posted by .. eh .. cant find the post, sry
-		-- text
-		local class = select(2, UnitClass("Player"))
-		if class == "DEATHKNIGHT" then
-			mmconfig.textcolorclicked = "|cffc41e3c"
-		elseif class == "DRUID" then
-			mmconfig.textcolorclicked = "|cffff7d0a"
-		elseif class == "HUNTER" then
-			mmconfig.textcolorclicked = "|cffabd674"
-		elseif class == "MAGE" then
-			mmconfig.textcolorclicked = "|cff68cdff"
-		elseif class == "PALADIN" then
-			mmconfig.textcolorclicked = "|cfff58cba"
-		elseif class == "PRIEST" then
-			mmconfig.textcolorclicked = "|cffd4d4d4"
-		elseif class == "ROGUE" then
-			mmconfig.textcolorclicked = "|cfffff352"
-		elseif class == "SHAMAN" then
-			mmconfig.textcolorclicked = "|cff294f9b"
-		elseif class == "WARLOCK" then
-			mmconfig.textcolorclicked = "|cff9482c9"
-		elseif class == "WARRIOR" then
-			mmconfig.textcolorclicked = "|cffc79c6e"
-		end
-		
-		-- the "m"
-		local classcolor = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[select(2,UnitClass("player"))]
-		mmconfig.mouseoverm = {classcolor.r,classcolor.g,classcolor.b,1}
+	-- this code is copied out of the Tukui Forum posted by .. eh .. cant find the post, sry
+	local class = select(2, UnitClass("Player"))
+	if class == "DEATHKNIGHT" then
+		mmconfig.textcolorclicked = "|cffc41e3c"
+	elseif class == "DRUID" then
+		mmconfig.textcolorclicked = "|cffff7d0a"
+	elseif class == "HUNTER" then
+		mmconfig.textcolorclicked = "|cffabd674"
+	elseif class == "MAGE" then
+		mmconfig.textcolorclicked = "|cff68cdff"
+	elseif class == "PALADIN" then
+		mmconfig.textcolorclicked = "|cfff58cba"
+	elseif class == "PRIEST" then
+		mmconfig.textcolorclicked = "|cffd4d4d4"
+	elseif class == "ROGUE" then
+		mmconfig.textcolorclicked = "|cfffff352"
+	elseif class == "SHAMAN" then
+		mmconfig.textcolorclicked = "|cff294f9b"
+	elseif class == "WARLOCK" then
+		mmconfig.textcolorclicked = "|cff9482c9"
+	elseif class == "WARRIOR" then
+		mmconfig.textcolorclicked = "|cffc79c6e"
+	end
+	
+	-- the "m"
+	local classcolor = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[select(2,UnitClass("player"))]
+	mmconfig.mouseoverm = {classcolor.r,classcolor.g,classcolor.b,1}
 end

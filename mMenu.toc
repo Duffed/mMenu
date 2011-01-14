@@ -2,7 +2,7 @@
 ## Title: |cff00a2ffm|rMenu
 ## Notes: Dropdown Addon Menu
 ## Author: magges
-## Version: 1.17
+## Version: 1.18
 config.lua
 core.lua
 games.lua
