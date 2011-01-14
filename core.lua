@@ -12,7 +12,7 @@ local function skinbutton(f)
 	f:SetBackdropColor(unpack(mmconfig.configBackDropColor))
 	f:SetBackdropBorderColor(unpack(mmconfig.configBackDropBorderColor))
 	
-	if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow and not TukuiCF["datatext"].mmenu and not TukuiCF["datatext"].mmenu > 0 then
+	if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then
 		TukuiDB.CreateShadow(f)
 	end
 end
@@ -45,7 +45,7 @@ openmenubutton.texturemo:SetVertexColor(unpack(mmconfig.mouseoverm))
 openmenubutton.texturemo:SetAlpha(0)
 end
 -- this frame around the buttons makes it easier for me to manage it and it looks better imo
-local menu = CreateFrame("Frame", "menu", UIParent)
+local menu = CreateFrame("Frame", "menu", OpenMenuButton)
 menu:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", 
 								edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
 								tileSize = 0, edgeSize = 1, 
@@ -58,8 +58,7 @@ if mmconfig.menudirection == true then
 else
 	menu:SetPoint("BOTTOMRIGHT", OpenMenuButton, "TOPRIGHT", 0, 3)
 end
-menu:SetFrameLevel(2)
-menu:SetFrameStrata("HIGH")
+menu:SetFrameStrata("BACKGROUND")
 if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then
 	TukuiDB.CreateShadow(menu)
 end
@@ -139,25 +138,19 @@ function CreateAddonButton(f)
 	f:SetWidth(mmconfig.addonbuttonwidth)
 	f:SetHeight(mmconfig.addonbuttonheight)
 	f:EnableMouse(true)
-	f:SetFrameStrata("HIGH")
-	f:SetFrameLevel(3)
 	
 	if mmconfig.menudirection == true then
 		if mmenuaddons == 0 then
-			f:SetPoint("TOP", menu, "TOP", 0, -2)
+			f:SetPoint("TOPRIGHT", OpenMenuButton, "BOTTOMRIGHT", -2, -5)
 		else
-			f:SetPoint("TOP", menu, "TOP", 0, -((mmenuaddons * mmconfig.addonbuttonheight) + 2 + (mmenuaddons*2)))
+			f:SetPoint("TOPRIGHT", OpenMenuButton, "BOTTOMRIGHT", -2, -((mmenuaddons * mmconfig.addonbuttonheight) + 5 + (mmenuaddons*2)))
 		end
 	else
 		if mmenuaddons == 0 then
-			f:SetPoint("BOTTOM", menu, "BOTTOM", 0, 2)
+			f:SetPoint("BOTTOMRIGHT", OpenMenuButton, "TOPRIGHT", -2, 5)
 		else
-			f:SetPoint("BOTTOM", menu, "BOTTOM", 0, ((mmenuaddons * mmconfig.addonbuttonheight) + 2 + (mmenuaddons*2)))
+			f:SetPoint("BOTTOMRIGHT", OpenMenuButton, "TOPRIGHT", -2, ((mmenuaddons * mmconfig.addonbuttonheight) + 5 + (mmenuaddons*2)))
 		end
-	end
-	
-	if mmconfig.hideonclick == true then
-		f:SetScript("OnMouseUp", function() menu:Hide() end)
 	end
 	
 	f.text = f:CreateFontString(nil, "LOW")
@@ -212,28 +205,6 @@ if (mmconfig.mList.Bags) then
 	end)
 	
 	mmenuaddons = mmenuaddons + 1
-end
-
--- Raidmark Bar --------------------------- 
-if IsAddOnLoaded("TukuiMarkBar") and (mmconfig.mList.Raidmarkbar) then 
-     markbarbutton = CreateFrame("Frame", "MarkbarButton", menu) 
-     CreateAddonButton(markbarbutton) 
-     markbarbutton.text:SetText(mmconfig.textcolor.."Raidmarks|r") 
-      
-     --open/close 
-     markbarbutton:SetScript("OnMouseDown", function() ToggleFrame(MarkBarBackground) end) 
-      
-     -- mouseover 
-     markbarbutton:SetScript("OnEnter", function() 
-          markbarbutton.text:SetText(mmconfig.textcolorclicked.."Raidmarks|r") 
-          markbarbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop)) 
-     end) 
-     markbarbutton:SetScript("OnLeave", function() 
-          markbarbutton.text:SetText(mmconfig.textcolor.."Raidmarks|r") 
-          markbarbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor)) 
-     end) 
-           
-     mmenuaddons = mmenuaddons + 1 
 end
 
 -- Grid/Grid2 --------------------------
@@ -646,7 +617,6 @@ open:SetScript("OnMouseUp", function()
 												if not TukuiConfigUI then SlashCmdList["CONFIG"]()
 												else TukuiConfigUI:Show()
 												end end end
-	if IsAddOnLoaded("TukuiMarkBar") then if (mmconfig.openall.Raidmarkbar) then MarkBarBackground:Show() end end
 end)
 
 -- close all button
@@ -674,7 +644,6 @@ close:SetScript("OnMouseUp", function()
 												if not TukuiConfigUI then return
 												else TukuiConfigUI:Hide()
 												end end end
-	if IsAddOnLoaded("TukuiMarkBar") then if (mmconfig.closeall.Raidmarkbar) then MarkBarBackground:Hide() end end
 end)
 
 AddOn:UnregisterEvent("PLAYER_ENTERING_WORLD") -- UnregisterEvent so it only loads on first start
@@ -711,19 +680,3 @@ end
 
 AddOn:RegisterEvent("PLAYER_ENTERING_WORLD")
 AddOn["PLAYER_ENTERING_WORLD"] = login
-
--- Tukui Datatext
-if TukuiCF["datatext"].mmenu and TukuiCF["datatext"].mmenu > 0 and IsAddOnLoaded("Tukui") and mmconfig.tukuisupport then
-	menu:ClearAllPoints()
-	if IsAddOnLoaded("Duffed") then
-		menu:SetPoint("BOTTOMRIGHT", TukuiActionBarBackground, "TOPRIGHT", 0, 4)
-	else
-		menu:SetPoint("BOTTOM", mmdatatextbutton, "TOP", 0, 4)
-	end
-	openmenubutton:SetPoint("CENTER", mmdatatextbutton)
-	openmenubutton:SetHeight(0.1)
-	openmenubutton:SetWidth(0.1)
-	openmenubutton:SetFrameStrata("BACKGROUND")
-	openmenubutton:SetFrameLevel(0)
-	openmenubutton:SetMovable(false)
-end
