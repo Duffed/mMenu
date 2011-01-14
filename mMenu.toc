@@ -1,0 +1,8 @@
+## Interface: 40000
+## Title: |cff00a2ffm|rMenu
+## Notes: Dropdown Addon Menu
+## Author: magges
+## Version: 1.18
+config.lua
+core.lua
+games.lua
