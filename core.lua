@@ -1,58 +1,74 @@
-local AddOn = CreateFrame("Frame")
-local OnEvent = function(self, event, ...) self[event](self, event, ...) end
-AddOn:SetScript("OnEvent", OnEvent)
-
--- Skin function
-local function skinbutton(f)
+--------------------------------------------------------------------------------------
+-- "mMenu" - Addon Toggle Menu
+-- written by magges
+--------------------------------------------------------------------------------------
+mMenu = {}
+-- Skin functions
+function mMenu.skinbutton(f)
 	f:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", 
-								edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-								tileSize = 0, edgeSize = 1, 
-								insets = { left = -1, right = -1, top = -1, bottom = -1}
+		edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+		tileSize = 0, edgeSize = 1, 
+		insets = { left = -1, right = -1, top = -1, bottom = -1}
 	})
 	f:SetBackdropColor(unpack(mmconfig.configBackDropColor))
 	f:SetBackdropBorderColor(unpack(mmconfig.configBackDropBorderColor))
+	f:SetWidth(mmconfig.buttonwidth)
+	f:SetHeight(mmconfig.buttonheight)
+end
+
+function mMenu.skintext(f, arg1)
+	f:EnableMouse(true)
+	f:SetAlpha(.4)
+
+	f.text = f:CreateFontString(nil, "LOW")
+	f.text:SetPoint("CENTER", 1, 0)
+	f.text:SetFont(mmconfig.font, mmconfig.fontheight)
+	f.text:SetText(mmconfig.textcolor..arg1)
 	
-	if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow and not TukuiCF["datatext"].mmenu and not TukuiCF["datatext"].mmenu > 0 then
-		TukuiDB.CreateShadow(f)
-	end
+	--(mouseover)
+	f:SetScript("OnEnter", function()
+		UIFrameFadeIn(f, mmconfig.fadetime, 0.4, 1)
+		f.text:SetText(mmconfig.textcolorclicked..arg1)
+		f:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
+	end)
+	f:SetScript("OnLeave", function()
+		UIFrameFadeOut(f, mmconfig.fadetime, 1, 0.4)
+		f.text:SetText(mmconfig.textcolor..arg1)
+		f:SetBackdropColor(unpack(mmconfig.configBackDropColor))
+	end)
+	
+	if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then TukuiDB.CreateShadow(f) end
 end
 
 -- the menu open button
 local openmenubutton = CreateFrame("Frame", "OpenMenuButton", UIParent)
-skinbutton(openmenubutton)
-openmenubutton:SetWidth(mmconfig.buttonwidth)
-openmenubutton:SetHeight(mmconfig.buttonheight)
+mMenu.skinbutton(openmenubutton)
 openmenubutton:SetPoint("CENTER",0,0)
-openmenubutton:EnableMouse(true)
 openmenubutton:SetMovable(true)
+if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then TukuiDB.CreateShadow(openmenubutton) end
 
 -- (texture)
 openmenubutton.texture = openmenubutton:CreateTexture(nil, "OVERLAY")
 if mmconfig.buttonwidth > 13 then
-openmenubutton.texture:SetPoint("CENTER", openmenubutton, "CENTER")
-openmenubutton.texture:SetWidth(20)
-openmenubutton.texture:SetHeight(20)
-openmenubutton.texture:SetTexture("Interface\\addons\\mMenu\\button")
-openmenubutton.texture:SetAlpha(1)
+	openmenubutton.texture:SetPoint("CENTER", openmenubutton, "CENTER")
+	openmenubutton.texture:SetWidth(20)
+	openmenubutton.texture:SetHeight(20)
+	openmenubutton.texture:SetTexture("Interface\\addons\\mMenu\\button")
+	openmenubutton.texture:SetAlpha(1)
 end
 openmenubutton.texturemo = openmenubutton:CreateTexture(nil, "OVERLAY")
 if mmconfig.buttonwidth > 13 then
-openmenubutton.texturemo:SetPoint("CENTER", openmenubutton, "CENTER")
-openmenubutton.texturemo:SetWidth(20)
-openmenubutton.texturemo:SetHeight(20)
-openmenubutton.texturemo:SetTexture("Interface\\addons\\mMenu\\button")
-openmenubutton.texturemo:SetVertexColor(unpack(mmconfig.mouseoverm))
-openmenubutton.texturemo:SetAlpha(0)
+	openmenubutton.texturemo:SetPoint("CENTER", openmenubutton, "CENTER")
+	openmenubutton.texturemo:SetWidth(20)
+	openmenubutton.texturemo:SetHeight(20)
+	openmenubutton.texturemo:SetTexture("Interface\\addons\\mMenu\\button")
+	openmenubutton.texturemo:SetVertexColor(unpack(mmconfig.mouseoverm))
+	openmenubutton.texturemo:SetAlpha(0)
 end
+
 -- this frame around the buttons makes it easier for me to manage it and it looks better imo
 local menu = CreateFrame("Frame", "menu", UIParent)
-menu:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", 
-								edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-								tileSize = 0, edgeSize = 1, 
-								insets = { left = -1, right = -1, top = -1, bottom = -1}
-})
-menu:SetBackdropColor(0,0,0,1)
-menu:SetBackdropBorderColor(.2,.2,.2,1)
+mMenu.skinbutton(menu)
 if mmconfig.menudirection == true then
 	menu:SetPoint("TOPRIGHT", OpenMenuButton, "BOTTOMRIGHT", 0, -3)
 else
@@ -60,85 +76,34 @@ else
 end
 menu:SetFrameLevel(2)
 menu:SetFrameStrata("HIGH")
-if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then
-	TukuiDB.CreateShadow(menu)
-end
+if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then TukuiDB.CreateShadow(menu) end
 menu:Hide()
 
 -- "close all" button
 local close = CreateFrame("Frame", "close", UIParent)
-skinbutton(close)
-close:SetWidth(mmconfig.buttonwidth)
-close:SetHeight(mmconfig.buttonheight)
+mMenu.skinbutton(close)
 close:SetPoint("RIGHT", openmenubutton, "LEFT",-3,0)
-close:EnableMouse(true)
-close:SetAlpha(.4)
+mMenu.skintext(close, "C|r")
 if (mmconfig.hideclose) then close:Hide() end
-
-local c = close:CreateFontString(nil, "LOW")
-c:SetPoint("CENTER", 1, 0)
-c:SetFont(mmconfig.font, mmconfig.fontheight)
-c:SetText(mmconfig.textcolor.."C")
---mouseover
-close:SetScript("OnEnter", function()
-	UIFrameFadeIn(close, mmconfig.fadetime, 0.4, 1)
-	c:SetText(mmconfig.textcolorclicked.."C")
-	close:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-end)
-close:SetScript("OnLeave", function()
-	UIFrameFadeOut(close, mmconfig.fadetime, 1, 0.4)
-	c:SetText(mmconfig.textcolor.."C")
-	close:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-end)
-	
 
 -- "open all" button
 local open = CreateFrame("Frame", "open", UIParent)
-skinbutton(open)
-open:SetWidth(mmconfig.buttonwidth)
-open:SetHeight(mmconfig.buttonheight)
+mMenu.skinbutton(open)
 if not (mmconfig.hideclose) then 
-	open:SetPoint("RIGHT", close, "LEFT",-3,0)
+	open:SetPoint("RIGHT", close, "LEFT", -3, 0)
 else
-	open:SetPoint("RIGHT", openmenubutton, "LEFT",-3,0)
+	open:SetPoint("RIGHT", openmenubutton, "LEFT", -3, 0)
 end
-open:EnableMouse(true)
-open:SetAlpha(.4)
+mMenu.skintext(open, "O|r")
 if (mmconfig.hideopen) then open:Hide() end
 
-local o = open:CreateFontString(nil, "LOW")
-o:SetPoint("CENTER", 1, 0)
-o:SetFont(mmconfig.font, mmconfig.fontheight)
-o:SetText(mmconfig.textcolor.."O")
---(mouseover)
-open:SetScript("OnEnter", function()
-	UIFrameFadeIn(open, mmconfig.fadetime, 0.4, 1)
-	o:SetText(mmconfig.textcolorclicked.."O")
-	open:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-end)
-open:SetScript("OnLeave", function()
-	UIFrameFadeOut(open, mmconfig.fadetime, 1, 0.4)
-	o:SetText(mmconfig.textcolor.."O")
-	open:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-end)
-
---------------------------------------------------------------------------------------
-local function login() --make sure it loads after login
-mmenuaddons = 0 -- Lets go!
 --------------------------------------------------------------------------------------
 -- "Create Addon Button" function
 --------------------------------------------------------------------------------------
-function CreateAddonButton(f)
-	f:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", 
-								edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-								tileSize = 0, edgeSize = 1, 
-								insets = { left = -1, right = -1, top = -1, bottom = -1}
-	})
-	f:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	f:SetBackdropBorderColor(unpack(mmconfig.configBackDropBorderColor))
+function mMenu.CreateAddonButton(f, arg1)
+	mMenu.skinbutton(f)
 	f:SetWidth(mmconfig.addonbuttonwidth)
 	f:SetHeight(mmconfig.addonbuttonheight)
-	f:EnableMouse(true)
 	f:SetFrameStrata("HIGH")
 	f:SetFrameLevel(3)
 	
@@ -168,30 +133,30 @@ function CreateAddonButton(f)
 	f.text:SetFont(mmconfig.font, mmconfig.fontheight)
 	f.text:SetWidth(mmconfig.addonbuttonwidth - 8)
 	f.text:SetPoint("CENTER", f, "CENTER")
+	f.text:SetText(arg1)
+
+	f:SetScript("OnEnter", function()
+		f.text:SetText(mmconfig.textcolorclicked..arg1)
+		f:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
+	end)
+	f:SetScript("OnLeave", function()
+		f.text:SetText(mmconfig.textcolor..arg1)
+		f:SetBackdropColor(unpack(mmconfig.configBackDropColor))
+	end)
 end
+
 --------------------------------------------------------------------------------------
--- Addon Buttons
--- (Addon order)
+-- Addon Buttons (order)
+mmenuaddons = 0 -- Lets go!
 --------------------------------------------------------------------------------------
 
 -- Worldmap --------------------------
 if (mmconfig.mList.WorldMap) then
 	worldmapbutton = CreateFrame("Frame", "WorldMapButton", menu)
-	CreateAddonButton(worldmapbutton)
-	worldmapbutton.text:SetText(mmconfig.textcolor.."World Map|r")
+	mMenu.CreateAddonButton(worldmapbutton, "World Map|r")
 	
 	--open/close
 	worldmapbutton:SetScript("OnMouseDown", function() ToggleFrame(WorldMapFrame) end)
-	
-	-- mouseover
-	worldmapbutton:SetScript("OnEnter", function()
-		worldmapbutton.text:SetText(mmconfig.textcolorclicked.."World Map|r")
-		worldmapbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	worldmapbutton:SetScript("OnLeave", function()
-		worldmapbutton.text:SetText(mmconfig.textcolor.."World Map|r")
-		worldmapbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
 	
 	mmenuaddons = mmenuaddons + 1
 end
@@ -199,79 +164,43 @@ end
 -- Bags --------------------------
 if (mmconfig.mList.Bags) then
 	bagsbutton = CreateFrame("Frame", "bagsButton", menu)
-	CreateAddonButton(bagsbutton)
-	bagsbutton.text:SetText(mmconfig.textcolor.."Bags|r")
+	mMenu.CreateAddonButton(bagsbutton, "Bags|r")
 	
 	--open/close
 	bagsbutton:SetScript("OnMouseDown", function() OpenAllBags() end)
-	
-	-- mouseover
-	bagsbutton:SetScript("OnEnter", function()
-		bagsbutton.text:SetText(mmconfig.textcolorclicked.."Bags|r")
-		bagsbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	bagsbutton:SetScript("OnLeave", function()
-		bagsbutton.text:SetText(mmconfig.textcolor.."Bags|r")
-		bagsbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
-	
+
 	mmenuaddons = mmenuaddons + 1
 end
 
--- Raidmark Bar --------------------------- 
-if IsAddOnLoaded("TukuiMarkBar") and (mmconfig.mList.Raidmarkbar) then 
-     markbarbutton = CreateFrame("Frame", "MarkbarButton", menu) 
-     CreateAddonButton(markbarbutton) 
-     markbarbutton.text:SetText(mmconfig.textcolor.."Raidmarks|r") 
-      
-     --open/close 
-     markbarbutton:SetScript("OnMouseDown", function() ToggleFrame(MarkBarBackground) end) 
-      
-     -- mouseover 
-     markbarbutton:SetScript("OnEnter", function() 
-          markbarbutton.text:SetText(mmconfig.textcolorclicked.."Raidmarks|r") 
-          markbarbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop)) 
-     end) 
-     markbarbutton:SetScript("OnLeave", function() 
-          markbarbutton.text:SetText(mmconfig.textcolor.."Raidmarks|r") 
-          markbarbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor)) 
-     end) 
-           
-     mmenuaddons = mmenuaddons + 1 
+-- VuhDO --------------------------
+if IsAddOnLoaded("VuhDo") and (mmconfig.mList.VuhDo) then
+	vuhdobutton = CreateFrame("Frame", "vuhdobutton", menu)
+	mMenu.CreateAddonButton(vuhdobutton, "VuhDo|r")
+	
+	--open/close
+	vuhdobutton:SetScript("OnMouseDown", function(self, btn)
+		if (btn == "LeftButton") then
+			SlashCmdList["VUHDO"]("toggle")
+		else
+			ToggleFrame(VuhDoBuffWatchMainFrame)
+		end
+	end)
+
+	mmenuaddons = mmenuaddons + 1
 end
 
 -- Grid/Grid2 --------------------------
 if (IsAddOnLoaded("Grid") or IsAddOnLoaded("Grid2")) and (mmconfig.mList.Grid) then
 	gridbutton = CreateFrame("Frame", "gridbuttonButton", menu)
-	CreateAddonButton(gridbutton)
-	gridbutton.text:SetText(mmconfig.textcolor.."Grid|r")
+	mMenu.CreateAddonButton(gridbutton, "Grid|r")
 	
 	--open/close
 	gridbutton:SetScript("OnMouseDown", function() 
 		if IsAddOnLoaded("Grid2") then
-			if Grid2LayoutFrame:IsShown() then
-				Grid2LayoutFrame:Hide()
-			else
-				Grid2LayoutFrame:Show()
-			end
+			ToggleFrame(Grid2LayoutFrame)
+		elseif IsAddOnLoaded("Grid") then
+			ToggleFrame(GridLayoutFrame)
 		end
-		if IsAddOnLoaded("Grid") then
-			if GridLayoutFrame:IsShown() then
-				GridLayoutFrame:Hide()
-			else
-				GridLayoutFrame:Show()
-			end
-		end
-	end)
-	
-	-- mouseover
-	gridbutton:SetScript("OnEnter", function()
-		gridbutton.text:SetText(mmconfig.textcolorclicked.."Grid|r")
-		gridbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	gridbutton:SetScript("OnLeave", function()
-		gridbutton.text:SetText(mmconfig.textcolor.."Grid|r")
-		gridbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
 	end)
 	
 	mmenuaddons = mmenuaddons + 1
@@ -280,8 +209,7 @@ end
 -- Healbot --------------------------
 if IsAddOnLoaded("HealBot") and (mmconfig.mList.HealBot) then
 	hbbutton = CreateFrame("Frame", "hbbuttonButton", menu)
-	CreateAddonButton(hbbutton)
-	hbbutton.text:SetText(mmconfig.textcolor.."HealBot|r")
+	mMenu.CreateAddonButton(hbbutton, "HealBot|r")
 	
 	--open/close
 	hbbutton:SetScript("OnMouseDown", function() 
@@ -295,37 +223,16 @@ if IsAddOnLoaded("HealBot") and (mmconfig.mList.HealBot) then
         end
 	end)
 	
-	-- mouseover
-	hbbutton:SetScript("OnEnter", function()
-		hbbutton.text:SetText(mmconfig.textcolorclicked.."HealBot|r")
-		hbbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	hbbutton:SetScript("OnLeave", function()
-		hbbutton.text:SetText(mmconfig.textcolor.."HealBot|r")
-		hbbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
-	
 	mmenuaddons = mmenuaddons + 1
 end
 
 -- Skada --------------------------
 if IsAddOnLoaded("Skada") and (mmconfig.mList.Skada) then
 	skadabutton = CreateFrame("Frame", "SkadaButton", menu)
-	CreateAddonButton(skadabutton)
-	skadabutton.text:SetText(mmconfig.textcolor.."Skada|r")
+	mMenu.CreateAddonButton(skadabutton, "Skada|r")
 	
 	--open/close
 	skadabutton:SetScript("OnMouseDown", function() Skada:ToggleWindow() end)
-	
-	-- mouseover
-	skadabutton:SetScript("OnEnter", function()
-		skadabutton.text:SetText(mmconfig.textcolorclicked.."Skada|r")
-		skadabutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	skadabutton:SetScript("OnLeave", function()
-		skadabutton.text:SetText(mmconfig.textcolor.."Skada|r")
-		skadabutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
 	
 	disabled = true -- skada specific .. its more a test but better dont delete it
 	mmenuaddons = mmenuaddons + 1
@@ -334,21 +241,10 @@ end
 -- TinyDPS --------------------------
 if IsAddOnLoaded("TinyDPS") and (mmconfig.mList.TinyDPS) then
 	tdpsbutton = CreateFrame("Frame", "tdpsbutton", menu)
-	CreateAddonButton(tdpsbutton)
-	tdpsbutton.text:SetText(mmconfig.textcolor.."TinyDPS|r")
+	mMenu.CreateAddonButton(tdpsbutton, "TinyDPS|r")
 	
 	--open/close
 	tdpsbutton:SetScript("OnMouseDown", function() ToggleFrame(tdpsFrame) end)
-	
-	-- mouseover
-	tdpsbutton:SetScript("OnEnter", function()
-		tdpsbutton.text:SetText(mmconfig.textcolorclicked.."TinyDPS|r")
-		tdpsbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	tdpsbutton:SetScript("OnLeave", function()
-		tdpsbutton.text:SetText(mmconfig.textcolor.."TinyDPS|r")
-		tdpsbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
 	
 	mmenuaddons = mmenuaddons + 1
 end
@@ -356,8 +252,7 @@ end
 -- Numeration --------------------------
 if IsAddOnLoaded("Numeration") and (mmconfig.mList.Numeration) then
 	numdpsbutton = CreateFrame("Frame", "numdpsbutton", menu)
-	CreateAddonButton(numdpsbutton)
-	numdpsbutton.text:SetText(mmconfig.textcolor.."Numeration|r")
+	mMenu.CreateAddonButton(numdpsbutton, "Numeration|r")
 	
 	--open/close + shift key = reset
 	numdpsbutton:SetScript("OnMouseDown", function() 
@@ -368,24 +263,13 @@ if IsAddOnLoaded("Numeration") and (mmconfig.mList.Numeration) then
 		end
 	end)
 	
-	-- mouseover
-	numdpsbutton:SetScript("OnEnter", function()
-		numdpsbutton.text:SetText(mmconfig.textcolorclicked.."Numeration|r")
-		numdpsbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	numdpsbutton:SetScript("OnLeave", function()
-		numdpsbutton.text:SetText(mmconfig.textcolor.."Numeration|r")
-		numdpsbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
-	
 	mmenuaddons = mmenuaddons + 1
 end
 
 -- Recount --------------------------
 if IsAddOnLoaded("Recount") and (mmconfig.mList.Recount) then
 	recountbutton = CreateFrame("Frame", "RecountButton", menu)
-	CreateAddonButton(recountbutton)
-	recountbutton.text:SetText(mmconfig.textcolor.."Recount|r")
+	mMenu.CreateAddonButton(recountbutton, "Recount|r")
 	
 	--open/close
 	recountbutton:SetScript("OnMouseDown", function() 
@@ -396,35 +280,25 @@ if IsAddOnLoaded("Recount") and (mmconfig.mList.Recount) then
 		end
 	end)
 	
-	-- mouseover
-	recountbutton:SetScript("OnEnter", function()
-		recountbutton.text:SetText(mmconfig.textcolorclicked.."Recount|r")
-		recountbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	recountbutton:SetScript("OnLeave", function()
-		recountbutton.text:SetText(mmconfig.textcolor.."Recount|r")
-		recountbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
-	
 	--position
+	mmenuaddons = mmenuaddons + 1
+end
+
+-- DBM Config --------------------------
+if IsAddOnLoaded("DBM-Core") and (mmconfig.mList.DBM) then
+	DBMbutton = CreateFrame("Frame", "DBMbutton", menu)
+	mMenu.CreateAddonButton(DBMbutton, "DBM Config|r")
+	
+	--open/close
+	DBMbutton:SetScript("OnMouseDown", function() DBM:LoadGUI() end)
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
 -- Omen --------------------------
 if IsAddOnLoaded("Omen") and (mmconfig.mList.Omen) then
 	omenbutton = CreateFrame("Frame", "omenbutton", menu)
-	CreateAddonButton(omenbutton)
-	omenbutton.text:SetText(mmconfig.textcolor.."Omen|r")
-	
-	-- mouseover
-	omenbutton:SetScript("OnEnter", function()
-		omenbutton.text:SetText(mmconfig.textcolorclicked.."Omen|r")
-		omenbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	omenbutton:SetScript("OnLeave", function()
-		omenbutton.text:SetText(mmconfig.textcolor.."Omen|r")
-		omenbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
+	mMenu.CreateAddonButton(omenbutton, "Omen|r")
 	
 	--open/close
 	omenbutton:SetScript("OnMouseDown", function() Omen:Toggle() end)
@@ -432,24 +306,24 @@ if IsAddOnLoaded("Omen") and (mmconfig.mList.Omen) then
 	mmenuaddons = mmenuaddons + 1
 end
 
+-- Raidmark Bar --------------------------- 
+if IsAddOnLoaded("TukuiMarkBar") and (mmconfig.mList.Raidmarkbar) then 
+    markbarbutton = CreateFrame("Frame", "MarkbarButton", menu) 
+    mMenu.CreateAddonButton(markbarbutton, "Raidmarks|r") 
+      
+    --open/close 
+    markbarbutton:SetScript("OnMouseDown", function() ToggleFrame(MarkBarBackground) end) 
+           
+    mmenuaddons = mmenuaddons + 1 
+end
+
 -- Atlasloot --------------------------
 if IsAddOnLoaded("AtlasLoot") and (mmconfig.mList.Atlas) then
 	atlasbutton = CreateFrame("Frame", "AtlasLootButton", menu)
-	CreateAddonButton(atlasbutton)
-	atlasbutton.text:SetText(mmconfig.textcolor.."AtlasLoot|r")
+	mMenu.CreateAddonButton(atlasbutton, "AtlasLoot|r")
 	
 	--open/close
 	atlasbutton:SetScript("OnMouseDown", function() ToggleFrame(AtlasLootDefaultFrame) end)
-	
-	-- mouseover
-	atlasbutton:SetScript("OnEnter", function()
-		atlasbutton.text:SetText(mmconfig.textcolorclicked.."AtlasLoot|r")
-		atlasbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	atlasbutton:SetScript("OnLeave", function()
-		atlasbutton.text:SetText(mmconfig.textcolor.."AtlasLoot|r")
-		atlasbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
 		
 	mmenuaddons = mmenuaddons + 1
 end
@@ -457,63 +331,67 @@ end
 -- Cascade --------------------------
 if IsAddOnLoaded("Cascade") and (mmconfig.mList.Cascade) then
 	cascadebutton = CreateFrame("Frame", "CascadeButton", menu)
-	CreateAddonButton(cascadebutton)
-	cascadebutton.text:SetText(mmconfig.textcolor.."Cascade|r")
+	mMenu.CreateAddonButton(cascadebutton, "Cascade|r")
 	
 	--open/close
 	cascadebutton:SetScript("OnMouseDown", function() ToggleFrame(CascadeFrame) end)
-	
-	-- mouseover
-	cascadebutton:SetScript("OnEnter", function()
-		cascadebutton.text:SetText(mmconfig.textcolorclicked.."Cascade|r")
-		cascadebutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	cascadebutton:SetScript("OnLeave", function()
-		cascadebutton.text:SetText(mmconfig.textcolor.."Cascade|r")
-		cascadebutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
 		
 	mmenuaddons = mmenuaddons + 1
 end
+
+-- Archaeo Helper --------------------------
+if IsAddOnLoaded("Arh") and (mmconfig.mList.Arh) then
+	arhbutton = CreateFrame("Frame", "ArhButton", menu)
+	mMenu.CreateAddonButton(arhbutton, "Arh|r")
+	
+	--open/close
+	arhbutton:SetScript("OnMouseDown", function() ToggleFrame(Arh_MainFrame) end)
+		
+	mmenuaddons = mmenuaddons + 1
+end
+
 -- Tukui Config --------------------------
 if IsAddOnLoaded("Tukui_ConfigUI") and IsAddOnLoaded("Tukui") and (mmconfig.mList.TukuiConfig) then
 	tukuiconfig = CreateFrame("Frame", "TukuiConfigButton", menu)
-	CreateAddonButton(tukuiconfig)
-	tukuiconfig.text:SetText(mmconfig.textcolor.."Tukui Config|r")
+	mMenu.CreateAddonButton(tukuiconfig, "Tukui Config|r")
 	
 	--open/close
 	tukuiconfig:SetScript("OnMouseDown", function() SlashCmdList["CONFIG"]() end)
-	
-	-- mouseover
-	tukuiconfig:SetScript("OnEnter", function()
-		tukuiconfig.text:SetText(mmconfig.textcolorclicked.."Tukui Config|r")
-		tukuiconfig:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	tukuiconfig:SetScript("OnLeave", function()
-		tukuiconfig.text:SetText(mmconfig.textcolor.."Tukui Config|r")
-		tukuiconfig:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
 		
 	mmenuaddons = mmenuaddons + 1
 end
--- Reload UI -------------------------- doesnt work yet
-if mmconfig.mList.ReloadUI and 1 == 2 then
-	reloaduibutton = CreateFrame("Frame", "ReloadUIButton", menu)
-	CreateAddonButton(reloaduibutton)
-	reloaduibutton.text:SetText(mmconfig.textcolor.."Reload UI|r")
+
+-- (Tukui)Elv Config --------------------------
+if IsAddOnLoaded("ElvUI_ConfigUI") and IsAddOnLoaded("ElvUI") and (mmconfig.mList.TukuiConfig) then
+	elvconfig = CreateFrame("Frame", "ElvConfigButton", menu)
+	mMenu.CreateAddonButton(elvconfig, "Elv Config|r")
 	
 	--open/close
-	reloaduibutton:SetScript("OnMouseUp", function() ReloadUI() end)
+	elvconfig:SetScript("OnMouseDown", function() SlashCmdList["CONFIG"]() end)
+		
+	mmenuaddons = mmenuaddons + 1
+end
+
+-- Reload UI -------------------------- 
+if mmconfig.mList.ReloadUI then
+	reloaduibutton = CreateFrame("Frame", "ReloadUIButton", menu)
+	mMenu.CreateAddonButton(reloaduibutton, "Reload UI|r")
 	
-	-- mouseover
-	reloaduibutton:SetScript("OnEnter", function()
-		reloaduibutton.text:SetText(mmconfig.textcolorclicked.."Reload UI|r")
-		reloaduibutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	reloaduibutton:SetScript("OnLeave", function()
-		reloaduibutton.text:SetText(mmconfig.textcolor.."Reload UI|r")
-		reloaduibutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
+		-- "Sure?" Button
+		surebutton = CreateFrame("Button", nil, reloaduibutton)
+		mMenu.CreateAddonButton(surebutton, "Sure?|r")
+		surebutton:SetWidth(40)
+		surebutton:SetPoint("LEFT", reloaduibutton, "RIGHT", 5, 0)
+		surebutton:RegisterForClicks("AnyUp")
+		surebutton:Hide()
+		
+		--Reload UI
+		surebutton:SetScript("OnMouseUp", function() end)
+		surebutton:SetScript("OnClick", function() ReloadUI() end)
+	
+	--open/close
+	reloaduibutton:SetScript("OnMouseUp", function() end)
+	reloaduibutton:SetScript("OnMouseDown", function() ToggleFrame(surebutton) end)
 		
 	mmenuaddons = mmenuaddons + 1
 end
@@ -525,7 +403,7 @@ menu:SetHeight((mmenuaddons * mmconfig.addonbuttonheight) + (mmenuaddons * 2) +2
 menu:SetWidth(mmconfig.addonbuttonwidth + 4)
 if menu:GetHeight() < mmconfig.addonbuttonheight then
 	local noaddons = CreateFrame("Frame", "noaddons", menu)
-	CreateAddonButton(noaddons)
+	mMenu.CreateAddonButton(noaddons)
 	noaddons.text:SetText("|cff9b9b9bNo Addons :<|r")
 	
 	close:Hide()
@@ -534,65 +412,44 @@ if menu:GetHeight() < mmconfig.addonbuttonheight then
 end
 
 -- WIM --------------------------
-if IsAddOnLoaded("WIM") then
-	if ( mmconfig.WIMSupport ) then
-		-- W Button
-		local wimbutton = CreateFrame("Frame", "wimbutton", openmenubutton)
-		skinbutton(wimbutton)
-		wimbutton:SetWidth(mmconfig.buttonwidth)
-		wimbutton:SetHeight(mmconfig.buttonheight)
-		wimbutton:SetPoint("LEFT", openmenubutton, "RIGHT", 3,0)
-		wimbutton:SetAlpha(0.4)
-		wimbutton:EnableMouse(true)
-		
-		local w = wimbutton:CreateFontString(nil, "LOW")
-		w:SetAllPoints(wimbutton)
-		w:SetFont(mmconfig.font, mmconfig.fontheight)
-		w:SetText(mmconfig.textcolor.."W")
-		
-		-- WIM toggle function
-		local hiddenWIM 
-		function toggleWIM()
-			if hiddenWIM then
-				WIM.ShowAllWindows()
-			else
-				WIM.HideAllWindows()
-			end
-			hiddenWIM = not hiddenWIM 
+if IsAddOnLoaded("WIM") and mmconfig.WIMSupport then
+	-- W Button
+	local wimbutton = CreateFrame("Frame", "wimbutton", openmenubutton)
+	mMenu.skinbutton(wimbutton)
+	wimbutton:SetPoint("LEFT", openmenubutton, "RIGHT", 3,0)
+	wimbutton:SetAlpha(0.4)
+	mMenu.skintext(w, "W|r")
+	
+	-- WIM toggle function
+	local hiddenWIM 
+	function toggleWIM()
+		if hiddenWIM then
+			WIM.ShowAllWindows()
+		else
+			WIM.HideAllWindows()
 		end
-		
-		-- Leftclick = toggle, rightclick = Menu
-		wimbutton:SetScript("OnMouseUp", function(parent, btn)
-			if(btn == "LeftButton") then
-				toggleWIM()
+		hiddenWIM = not hiddenWIM 
+	end
+	
+	-- Leftclick = toggle, rightclick = Menu
+	wimbutton:SetScript("OnMouseUp", function(parent, btn)
+		if(btn == "LeftButton") then
+			toggleWIM()
+			WIM.Menu:Hide();
+		else
+			WIM.Menu:ClearAllPoints();
+			if(WIM.Menu:IsShown()) then
 				WIM.Menu:Hide();
 			else
-				WIM.Menu:ClearAllPoints();
-				if(WIM.Menu:IsShown()) then
-					WIM.Menu:Hide();
+				if mmconfig.menudirection == true then
+					WIM.Menu:SetPoint("TOPLEFT", parent, "BOTTOMLEFT", -10, 10);
 				else
-					if mmconfig.menudirection == true then
-						WIM.Menu:SetPoint("TOPLEFT", parent, "BOTTOMLEFT", -10, 10);
-					else
-						WIM.Menu:SetPoint("BOTTOMLEFT", parent, "TOPLEFT", -10, -10);
-					end
-					WIM.Menu:Show();
+					WIM.Menu:SetPoint("BOTTOMLEFT", parent, "TOPLEFT", -10, -10);
 				end
+				WIM.Menu:Show();
 			end
-		end)
-
-		-- mouseover "W" Button
-		wimbutton:SetScript("OnEnter", function()
-			UIFrameFadeOut(wimbutton, mmconfig.fadetime, 0.4, 1)
-			w:SetText(mmconfig.textcolorclicked.."W")
-			wimbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-		end)
-		wimbutton:SetScript("OnLeave", function()
-			UIFrameFadeOut(wimbutton, mmconfig.fadetime, 1, 0.4)
-			w:SetText(mmconfig.textcolor.."W")
-			wimbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-		end)
-	end
+		end
+	end)
 end
 
 --------------------------------------------------------------------------------------
@@ -632,6 +489,7 @@ end)
 open:SetScript("OnMouseUp", function()
 	if 										(mmconfig.openall.WorldMap) then	WorldMapFrame:Show() end
 	if 										(mmconfig.openall.Bags) then		OpenAllBags() end
+	if IsAddOnLoaded("VuhDo") then if		(mmconfig.openall.VuhDo) then		SlashCmdList["VUHDO"]("show") end end
 	if IsAddOnLoaded("Grid") then if 		(mmconfig.openall.Grid) then 		GridLayoutFrame:Show() end end -- Grid
 	if IsAddOnLoaded("Grid2") then if 		(mmconfig.openall.Grid) then 		Grid2LayoutFrame:Show() end end -- Grid2
 	if IsAddOnLoaded("HealBot") then if 	(mmconfig.openall.HealBot) then 
@@ -645,12 +503,16 @@ open:SetScript("OnMouseUp", function()
 	if IsAddOnLoaded("AtlasLoot") then if 	(mmconfig.openall.Atlas) then 		AtlasLootDefaultFrame:Show() end end
 	if IsAddOnLoaded("Recount") then if 	(mmconfig.openall.Recount) then 	Recount.MainWindow:Show();Recount:RefreshMainWindow() end end
 	if IsAddOnLoaded("TinyDPS") then if 	(mmconfig.openall.TinyDPS) then 	tdpsFrame:Show() end end
+	if IsAddOnLoaded("DBM-Code") then if	(mmconfig.openall.DBM) then			DBM_GUI_OptionsFrame:Show() end end
 	if IsAddOnLoaded("Cascade") then if		(mmconfig.openall.Cascade) then		CascadeFrame:Show() end end
 	if IsAddOnLoaded("Tukui_ConfigUI") then if (mmconfig.openall.TukuiConfig) then 
 												if not TukuiConfigUI then SlashCmdList["CONFIG"]()
-												else TukuiConfigUI:Show()
-												end end end
+												else TukuiConfigUI:Show() end end end
+	if IsAddOnLoaded("ElvUI_ConfigUI") then if (mmconfig.openall.TukuiConfig) then 
+												if not ElvuiConfigUI then SlashCmdList["CONFIG"]()
+												else ElvuiConfigUI:Show() end end end
 	if IsAddOnLoaded("TukuiMarkBar") then if (mmconfig.openall.Raidmarkbar) then MarkBarBackground:Show() end end
+	if IsAddOnLoaded("Arh") then if 		(mmconfig.openall.Arh) then Arh_MainFrame:Show() end end
 end)
 
 -- close all button
@@ -660,6 +522,7 @@ end)
 close:SetScript("OnMouseUp", function()
 	if 										(mmconfig.closeall.WorldMap) then	WorldMapFrame:Hide() end
 	if 										(mmconfig.closeall.Bags) then		CloseAllBags() end
+	if IsAddOnLoaded("VuhDo") then if		(mmconfig.closeall.VuhDo) then		SlashCmdList["VUHDO"]("hide") end end
 	if IsAddOnLoaded("Grid") then if 		(mmconfig.closeall.Grid) then 		GridLayoutFrame:Hide() end end -- Grid
 	if IsAddOnLoaded("Grid2") then if 		(mmconfig.closeall.Grid) then 		Grid2LayoutFrame:Hide() end end -- Grid2
 	if IsAddOnLoaded("HealBot") then if 	(mmconfig.closeall.HealBot) then 
@@ -673,16 +536,17 @@ close:SetScript("OnMouseUp", function()
 	if IsAddOnLoaded("AtlasLoot") then if 	(mmconfig.closeall.Atlas) then 		AtlasLootDefaultFrame:Hide() end end
 	if IsAddOnLoaded("Recount") then if 	(mmconfig.closeall.Recount) then if Recount.MainWindow:IsShown() then Recount.MainWindow:Hide() end end end
 	if IsAddOnLoaded("TinyDPS") then if 	(mmconfig.closeall.TinyDPS) then 	tdpsFrame:Hide() end end
+	if IsAddOnLoaded("DBM-Core") then if	(mmconfig.closeall.DBM) then		DBM_GUI_OptionsFrame:Hide() end end
 	if IsAddOnLoaded("Cascade") then if		(mmconfig.closeall.Cascade) then	CascadeFrame:Hide() end end
 	if IsAddOnLoaded("Tukui_ConfigUI") then if (mmconfig.closeall.TukuiConfig) then
 												if not TukuiConfigUI then return
-												else TukuiConfigUI:Hide()
-												end end end
+												else TukuiConfigUI:Hide() end end end
+	if IsAddOnLoaded("ElvUI_ConfigUI") then if (mmconfig.closeall.TukuiConfig) then
+												if not ElvuiConfigUI then return
+												else ElvuiConfigUI:Hide() end end end									
 	if IsAddOnLoaded("TukuiMarkBar") then if (mmconfig.closeall.Raidmarkbar) then MarkBarBackground:Hide() end end
+	if IsAddOnLoaded("Arh") then if 		(mmconfig.openall.Arh) then Arh_MainFrame:Hide() end end
 end)
-
-AddOn:UnregisterEvent("PLAYER_ENTERING_WORLD") -- UnregisterEvent so it only loads on first start
-end -- function "login" ends here
 
 -- mouseover the "m" button
 openmenubutton:SetScript("OnEnter", function()
@@ -712,9 +576,6 @@ SlashCmdList["MMENU"] = function(msg)
 		print(mmconfig.textcolorclicked.."-|r "..mmconfig.textcolor.."Reset position with|r |cff9b9b9b'/mm reset'|r")
 	end
 end
-
-AddOn:RegisterEvent("PLAYER_ENTERING_WORLD")
-AddOn["PLAYER_ENTERING_WORLD"] = login
 
 -- Tukui Datatext
 if TukuiCF["datatext"].mmenu and TukuiCF["datatext"].mmenu > 0 and IsAddOnLoaded("Tukui") and mmconfig.tukuisupport then

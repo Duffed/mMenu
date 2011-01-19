@@ -1,7 +1,4 @@
 --------------------------------------------------------------------------------------
--- "mMenu" - Addon Toggle Menu
--- written by magges
---------------------------------------------------------------------------------------
 -- General Configuration
 --------------------------------------------------------------------------------------
 mmconfig = {
@@ -36,16 +33,19 @@ mmconfig = {
 	mList = {										-- Manage which Addons will be listed in the "m"enu
 		WorldMap = false,
 		Bags = false,
+		VuhDo = true,
 		Grid = true,
 		HealBot = true,
 		Numeration = true, 
 		Skada = true,
 		TinyDPS = true,
 		Recount = true,
+		DBM = true,
 		Omen = true,
 		Atlas = true,
 		Cascade = true,
 		TukuiConfig = true,
+		Arh = true,
 		ReloadUI = true,
 		Raidmarkbar = true,
 	},
@@ -54,15 +54,18 @@ mmconfig = {
 	openall = {										-- Manage which Addons will be open on the open-all buttons
 		WorldMap = false,
 		Bags = false,
+		VuhDo = true,
 		Grid = true,
 		HealBot = true,
 		Numeration = true, 
 		Skada = true,
 		TinyDPS = true,
 		Recount = true,
+		DBM = true,
 		Omen = true,
 		Atlas = false,
 		Cascade = true,
+		Arh = false,
 		TukuiConfig = false,
 		Raidmarkbar = false,
 	},
@@ -71,20 +74,23 @@ mmconfig = {
 	closeall = {									-- Manage which Addons will be close on the close-all buttons
 		WorldMap = false,
 		Bags = false,
+		VuhDo = true,
 		Grid = true,
 		HealBot = true,
 		Numeration = true, 
 		Skada = true,	
 		TinyDPS = true,
 		Recount = true,
+		DBM = true,
 		Omen = true,
 		Atlas = true,
 		Cascade = true,
+		Arh = false,
 		TukuiConfig = true,
 		Raidmarkbar = false,
 	},
 }
-if UnitName("player") == "Duffed" or UnitName("player") == "Suq" or UnitName("player") == "Sappy" or UnitName("player") == "Gawk" or UnitName("player") == "Sacerdus" then mmconfig.hideopen = true mmconfig.hideclose = true mmconfig.menudirection = false mmconfig.buttonheight = ActionBar3Background:GetHeight() mmconfig.buttonwidth = 7 end
+-- if UnitName("player") == "Duffed" or UnitName("player") == "Suq" or UnitName("player") == "Sappy" or UnitName("player") == "Gawk" or UnitName("player") == "Sacerdus" then mmconfig.hideopen = true mmconfig.hideclose = true mmconfig.menudirection = false mmconfig.buttonheight = ActionBar3Background:GetHeight() mmconfig.buttonwidth = 7 end
 --------------------------------------------------------------------------------------
 -- Extended Configuration
 --------------------------------------------------------------------------------------
@@ -148,8 +154,6 @@ if ( mmconfig.tukuisupport ) then
 		mmconfig.menudirection = false
 	end
 end
-
-
 
 --------------------------------------------------------------------------------------
 -- Classcolor

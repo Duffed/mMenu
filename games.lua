@@ -1,30 +1,16 @@
-local AddOn = CreateFrame("Frame")
-local OnEvent = function(self, event, ...) self[event](self, event, ...) end
-AddOn:SetScript("OnEvent", OnEvent)
-
-
 -- this frame around the buttons makes it easier for me to manage it and it looks better imo
 local gamemenu = CreateFrame("Frame", "gamemenu", menu)
-gamemenu:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", 
-								edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-								tileSize = 0, edgeSize = 1, 
-								insets = { left = -1, right = -1, top = -1, bottom = -1}
-})
-gamemenu:SetBackdropColor(0,0,0,1)
-gamemenu:SetBackdropBorderColor(.2,.2,.2,1)
-if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then
-	TukuiDB.CreateShadow(gamemenu)
-end
+mMenu.skinbutton(gamemenu)
+gamemenu:SetFrameLevel(2)
+gamemenu:SetFrameStrata("HIGH")
 if mmconfig.menudirection == true then
 	gamemenu:SetPoint("TOP", menu, "BOTTOM", 0, -4)
 else
 	gamemenu:SetPoint("BOTTOM", menu, "TOP", 0, 4)
 end
-gamemenu:SetFrameStrata("BACKGROUND")
+if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then TukuiDB.CreateShadow(gamemenu) end
 --------------------------------------------------------------------------------------
-local function login() --make sure it loads after login
 local mmenugames = 0 -- Lets go!
-
 --------------------------------------------------------------------------------------
 -- Setpoint function
 --------------------------------------------------------------------------------------
@@ -50,10 +36,7 @@ end
 -- Tetris --------------------------
 if IsAddOnLoaded("Tetris") then
 	tetrisbutton = CreateFrame("Frame", "tetrisButton", gamemenu)
-	CreateAddonButton(tetrisbutton)
-	tetrisbutton.text:SetText(mmconfig.textcolor.."Tetris|r")
-	
-	--position
+	mMenu.CreateAddonButton(tetrisbutton, "Tetris|r")
 	gamesetpoint(tetrisbutton)
 	
 	--open/close
@@ -64,16 +47,6 @@ if IsAddOnLoaded("Tetris") then
 			ToggleFrame(GameTetrisFrame)
 		end
 	end)
-	
-	-- mouseover
-	tetrisbutton:SetScript("OnEnter", function()
-		tetrisbutton.text:SetText(mmconfig.textcolorclicked.."Tetris|r")
-		tetrisbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	tetrisbutton:SetScript("OnLeave", function()
-		tetrisbutton.text:SetText(mmconfig.textcolor.."Tetris|r")
-		tetrisbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
 	mmenugames = mmenugames + 1
 end
 
@@ -81,30 +54,12 @@ end
 -- Bejeweled --------------------------
 if IsAddOnLoaded("Bejeweled") then
 	bjewbutton = CreateFrame("Frame", "bjewButton", gamemenu)
-	CreateAddonButton(bjewbutton)
-	bjewbutton.text:SetText(mmconfig.textcolor.."Bejeweled|r")
-	
-	--position
+	mMenu.CreateAddonButton(bjewbutton, "Bejeweled|r")
 	gamesetpoint(bjewbutton)
 	
 	--open/close
-	bjewbutton:SetScript("OnMouseDown", function() 
-		if not BejeweledWindow:IsShown() then
-			BejeweledWindow:Show()
-		else
-			BejeweledWindow:Hide()
-		end
-	end)
+	bjewbutton:SetScript("OnMouseDown", function() ToggleFrame(BejeweledWindow) end)
 	
-	-- mouseover
-	bjewbutton:SetScript("OnEnter", function()
-		bjewbutton.text:SetText(mmconfig.textcolorclicked.."Bejeweled|r")
-		bjewbutton:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
-	end)
-	bjewbutton:SetScript("OnLeave", function()
-		bjewbutton.text:SetText(mmconfig.textcolor.."Bejeweled|r")
-		bjewbutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	end)
 	mmenugames = mmenugames + 1
 end
 
@@ -113,12 +68,3 @@ gamemenu:SetHeight((mmenugames * mmconfig.addonbuttonheight) + (mmenugames * 2) 
 gamemenu:SetWidth(mmconfig.addonbuttonwidth + 4)
 
 if gamemenu:GetHeight() < mmconfig.addonbuttonheight then gamemenu:Hide() end
-
-AddOn:UnregisterEvent("PLAYER_ENTERING_WORLD") -- UnregisterEvent so it just loads on first start
-end -- function login end
---------------------------------------------------------------------------------------
--- function
---------------------------------------------------------------------------------------
-
-AddOn:RegisterEvent("PLAYER_ENTERING_WORLD")
-AddOn["PLAYER_ENTERING_WORLD"] = login
