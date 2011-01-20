@@ -418,7 +418,7 @@ if IsAddOnLoaded("WIM") and mmconfig.WIMSupport then
 	mMenu.skinbutton(wimbutton)
 	wimbutton:SetPoint("LEFT", openmenubutton, "RIGHT", 3,0)
 	wimbutton:SetAlpha(0.4)
-	mMenu.skintext(w, "W|r")
+	mMenu.skintext(wimbutton, "W|r")
 	
 	-- WIM toggle function
 	local hiddenWIM 
@@ -580,11 +580,11 @@ end
 -- Tukui Datatext
 if TukuiCF["datatext"].mmenu and TukuiCF["datatext"].mmenu > 0 and IsAddOnLoaded("Tukui") and mmconfig.tukuisupport then
 	menu:ClearAllPoints()
-	if IsAddOnLoaded("Duffed") then
-		menu:SetPoint("BOTTOMRIGHT", TukuiActionBarBackground, "TOPRIGHT", 0, 4)
-	else
+	-- if IsAddOnLoaded("Duffed") then
+		-- menu:SetPoint("BOTTOMRIGHT", TukuiActionBarBackground, "TOPRIGHT", 0, 4)
+	-- else
 		menu:SetPoint("BOTTOM", mmdatatextbutton, "TOP", 0, 4)
-	end
+	-- end
 	openmenubutton:SetPoint("CENTER", mmdatatextbutton)
 	openmenubutton:SetHeight(0.1)
 	openmenubutton:SetWidth(0.1)
