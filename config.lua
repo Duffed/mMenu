@@ -18,8 +18,8 @@ mmconfig = {
 	textcolor = "|cffffffff",						-- Text Color 
 	textcolorclicked = "|cffea0606",				-- Text Color mouseover (id try to change the color if the addon is shown but i dont know how ..)
 
-	configBackDropColor = {.2,.2,.2,1 },			-- Frame Background Color
-	configBackDropBorderColor = {.4,.4,.4,1 },		-- Frame Border Color
+	configBackDropColor = {.15,.15,.15,1 },			-- Frame Background Color
+	configBackDropBorderColor = {.25,.25,.25,1 },		-- Frame Border Color
 	mouseoverBackdrop = {.1,.1,.1,1 },				-- Mouseover BackdropColor
 	mouseoverm = {.9, 0, 0, 1 },					-- Mouseover Color of the "m"
 	
@@ -48,6 +48,7 @@ mmconfig = {
 		Arh = true,
 		ReloadUI = true,
 		Raidmarkbar = true,
+		PhoenixStyle = true,
 	},
 	
 	hideopen = false,								-- Hide the "O"pen all Button?
@@ -68,6 +69,7 @@ mmconfig = {
 		Arh = false,
 		TukuiConfig = false,
 		Raidmarkbar = false,
+		PhoenixStyle = false,
 	},
 
 	hideclose = false,								-- Hide the "C"lose all Button?
@@ -88,6 +90,7 @@ mmconfig = {
 		Arh = false,
 		TukuiConfig = true,
 		Raidmarkbar = false,
+		PhoenixStyle = false,
 	},
 }
 -- if UnitName("player") == "Duffed" or UnitName("player") == "Suq" or UnitName("player") == "Sappy" or UnitName("player") == "Gawk" or UnitName("player") == "Sacerdus" then mmconfig.hideopen = true mmconfig.hideclose = true mmconfig.menudirection = false mmconfig.buttonheight = ActionBar3Background:GetHeight() mmconfig.buttonwidth = 7 end
@@ -97,7 +100,7 @@ mmconfig = {
 -- Tukui Support Configuration
 --------------------------------------------------------------------------------------
 
-if ( mmconfig.tukuisupport ) then
+if mmconfig.tukuisupport and IsAddOnLoaded("Tukui") then
 	if IsAddOnLoaded("Tukui") then
 		mmconfig.configBackDropColor = (TukuiCF["media"].backdropcolor)
 		mmconfig.configBackDropBorderColor = (TukuiCF["media"].bordercolor)
@@ -105,7 +108,7 @@ if ( mmconfig.tukuisupport ) then
 		--mmconfig.mouseoverm = { }
 	end
 	-- Duffed edit
-	if IsAddOnLoaded("Duffed") and IsAddOnLoaded("Tukui") then
+	if IsAddOnLoaded("Duffed") then
 		mmconfig.textcolorclicked = panelcolor
 		if (TukuiCF["datatext"]["panelcolor"].classcolor) then
 			local classcolor = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[select(2,UnitClass("player"))]
@@ -113,7 +116,7 @@ if ( mmconfig.tukuisupport ) then
 		end
 	end
 	-- Eclipse edit
-	if (IsAddOnLoaded("eTukui_Arena_Layout") or IsAddOnLoaded("eTukui_CombaBar")) and IsAddOnLoaded("Tukui") then
+	if (IsAddOnLoaded("eTukui_Arena_Layout") or IsAddOnLoaded("eTukui_CombaBar")) then
 		mmconfig.textcolorclicked = (TukuiCF["datatext"].color)
 		if (TukuiCF["datatext"].classcolor) then
 			local classcolor = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[select(2,UnitClass("player"))]
@@ -123,7 +126,7 @@ if ( mmconfig.tukuisupport ) then
 	-- Dunno how to check other edits without a specific Addon like "eTukui_Arena_Layout" 
 	
 	-- Datatext Button
-	if TukuiCF["datatext"].mmenu and TukuiCF["datatext"].mmenu > 0 and IsAddOnLoaded("Tukui") then
+	if TukuiCF["datatext"].mmenu and TukuiCF["datatext"].mmenu > 0 then
 		local Stat = CreateFrame("Frame", "mmdatatextbutton", TukuiInfoLeft)
 		Stat:EnableMouse(true)
 		

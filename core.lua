@@ -12,8 +12,7 @@ function mMenu.skinbutton(f)
 	})
 	f:SetBackdropColor(unpack(mmconfig.configBackDropColor))
 	f:SetBackdropBorderColor(unpack(mmconfig.configBackDropBorderColor))
-	f:SetWidth(mmconfig.buttonwidth)
-	f:SetHeight(mmconfig.buttonheight)
+	f:SetSize(mmconfig.buttonwidth, mmconfig.buttonheight)
 end
 
 function mMenu.skintext(f, arg1)
@@ -51,16 +50,14 @@ if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then TukuiDB.CreateShadow(open
 openmenubutton.texture = openmenubutton:CreateTexture(nil, "OVERLAY")
 if mmconfig.buttonwidth > 13 then
 	openmenubutton.texture:SetPoint("CENTER", openmenubutton, "CENTER")
-	openmenubutton.texture:SetWidth(20)
-	openmenubutton.texture:SetHeight(20)
+	openmenubutton.texture:SetSize(20, 20)
 	openmenubutton.texture:SetTexture("Interface\\addons\\mMenu\\button")
 	openmenubutton.texture:SetAlpha(1)
 end
 openmenubutton.texturemo = openmenubutton:CreateTexture(nil, "OVERLAY")
 if mmconfig.buttonwidth > 13 then
 	openmenubutton.texturemo:SetPoint("CENTER", openmenubutton, "CENTER")
-	openmenubutton.texturemo:SetWidth(20)
-	openmenubutton.texturemo:SetHeight(20)
+	openmenubutton.texturemo:SetSize(20, 20)
 	openmenubutton.texturemo:SetTexture("Interface\\addons\\mMenu\\button")
 	openmenubutton.texturemo:SetVertexColor(unpack(mmconfig.mouseoverm))
 	openmenubutton.texturemo:SetAlpha(0)
@@ -102,8 +99,7 @@ if (mmconfig.hideopen) then open:Hide() end
 --------------------------------------------------------------------------------------
 function mMenu.CreateAddonButton(f, arg1)
 	mMenu.skinbutton(f)
-	f:SetWidth(mmconfig.addonbuttonwidth)
-	f:SetHeight(mmconfig.addonbuttonheight)
+	f:SetSize(mmconfig.addonbuttonwidth, mmconfig.addonbuttonheight)
 	f:SetFrameStrata("HIGH")
 	f:SetFrameLevel(3)
 	
@@ -350,6 +346,17 @@ if IsAddOnLoaded("Arh") and (mmconfig.mList.Arh) then
 	mmenuaddons = mmenuaddons + 1
 end
 
+-- PhoenixStyle --------------------------
+if IsAddOnLoaded("PhoenixStyle") and (mmconfig.mList.PhoenixStyle) then
+	phoenixbutton = CreateFrame("Frame", "PhoenixStyleButton", menu)
+	mMenu.CreateAddonButton(phoenixbutton, "PhoenixStyle|r")
+	
+	--open/close
+	phoenixbutton:SetScript("OnMouseDown", function() ToggleFrame(PSFmain1) ToggleFrame(PSFmain2) ToggleFrame(PSFmain3) end)
+		
+	mmenuaddons = mmenuaddons + 1
+end
+
 -- Tukui Config --------------------------
 if IsAddOnLoaded("Tukui_ConfigUI") and IsAddOnLoaded("Tukui") and (mmconfig.mList.TukuiConfig) then
 	tukuiconfig = CreateFrame("Frame", "TukuiConfigButton", menu)
@@ -379,8 +386,8 @@ if mmconfig.mList.ReloadUI then
 	
 		-- "Sure?" Button
 		surebutton = CreateFrame("Button", nil, reloaduibutton)
-		mMenu.CreateAddonButton(surebutton, "Sure?|r")
-		surebutton:SetWidth(40)
+		mMenu.CreateAddonButton(surebutton, "Ok|r")
+		surebutton:SetWidth(24)
 		surebutton:SetPoint("LEFT", reloaduibutton, "RIGHT", 5, 0)
 		surebutton:RegisterForClicks("AnyUp")
 		surebutton:Hide()
@@ -417,7 +424,6 @@ if IsAddOnLoaded("WIM") and mmconfig.WIMSupport then
 	local wimbutton = CreateFrame("Frame", "wimbutton", openmenubutton)
 	mMenu.skinbutton(wimbutton)
 	wimbutton:SetPoint("LEFT", openmenubutton, "RIGHT", 3,0)
-	wimbutton:SetAlpha(0.4)
 	mMenu.skintext(wimbutton, "W|r")
 	
 	-- WIM toggle function
@@ -460,7 +466,6 @@ end
 openmenubutton:SetScript("OnMouseDown", function()
 	if not IsShiftKeyDown() then
 		if menu:IsShown() then
-			-- UIFrameFadeOut(menu, mmconfig.fadetime, 0, 1)
 			menu:Hide()
 			openmenubutton.texturemo:SetAlpha(0)
 			openmenubutton.texture:SetAlpha(1)
@@ -503,7 +508,7 @@ open:SetScript("OnMouseUp", function()
 	if IsAddOnLoaded("AtlasLoot") then if 	(mmconfig.openall.Atlas) then 		AtlasLootDefaultFrame:Show() end end
 	if IsAddOnLoaded("Recount") then if 	(mmconfig.openall.Recount) then 	Recount.MainWindow:Show();Recount:RefreshMainWindow() end end
 	if IsAddOnLoaded("TinyDPS") then if 	(mmconfig.openall.TinyDPS) then 	tdpsFrame:Show() end end
-	if IsAddOnLoaded("DBM-Code") then if	(mmconfig.openall.DBM) then			DBM_GUI_OptionsFrame:Show() end end
+	if IsAddOnLoaded("DBM-Code") then if	(mmconfig.openall.DBM) then			DBM:LoadGUI() end end
 	if IsAddOnLoaded("Cascade") then if		(mmconfig.openall.Cascade) then		CascadeFrame:Show() end end
 	if IsAddOnLoaded("Tukui_ConfigUI") then if (mmconfig.openall.TukuiConfig) then 
 												if not TukuiConfigUI then SlashCmdList["CONFIG"]()
@@ -513,6 +518,7 @@ open:SetScript("OnMouseUp", function()
 												else ElvuiConfigUI:Show() end end end
 	if IsAddOnLoaded("TukuiMarkBar") then if (mmconfig.openall.Raidmarkbar) then MarkBarBackground:Show() end end
 	if IsAddOnLoaded("Arh") then if 		(mmconfig.openall.Arh) then Arh_MainFrame:Show() end end
+	if IsAddOnLoaded("PhoenixStyle") then if (mmconfig.openall.PhoenixStyle) then PSFmain1:Show() PSFmain2:Show() PSFmain3:Show() end end
 end)
 
 -- close all button
@@ -536,7 +542,7 @@ close:SetScript("OnMouseUp", function()
 	if IsAddOnLoaded("AtlasLoot") then if 	(mmconfig.closeall.Atlas) then 		AtlasLootDefaultFrame:Hide() end end
 	if IsAddOnLoaded("Recount") then if 	(mmconfig.closeall.Recount) then if Recount.MainWindow:IsShown() then Recount.MainWindow:Hide() end end end
 	if IsAddOnLoaded("TinyDPS") then if 	(mmconfig.closeall.TinyDPS) then 	tdpsFrame:Hide() end end
-	if IsAddOnLoaded("DBM-Core") then if	(mmconfig.closeall.DBM) then		DBM_GUI_OptionsFrame:Hide() end end
+	if IsAddOnLoaded("DBM-Core") then if	(mmconfig.closeall.DBM) then		if DBM_GUI_OptionsFrame then DBM_GUI_OptionsFrame:Hide() end end end
 	if IsAddOnLoaded("Cascade") then if		(mmconfig.closeall.Cascade) then	CascadeFrame:Hide() end end
 	if IsAddOnLoaded("Tukui_ConfigUI") then if (mmconfig.closeall.TukuiConfig) then
 												if not TukuiConfigUI then return
@@ -545,7 +551,8 @@ close:SetScript("OnMouseUp", function()
 												if not ElvuiConfigUI then return
 												else ElvuiConfigUI:Hide() end end end									
 	if IsAddOnLoaded("TukuiMarkBar") then if (mmconfig.closeall.Raidmarkbar) then MarkBarBackground:Hide() end end
-	if IsAddOnLoaded("Arh") then if 		(mmconfig.openall.Arh) then Arh_MainFrame:Hide() end end
+	if IsAddOnLoaded("Arh") then if 		 (mmconfig.closeall.Arh) then Arh_MainFrame:Hide() end end
+	if IsAddOnLoaded("PhoenixStyle") then if (mmconfig.closeall.PhoenixStyle) then PSFmain1:Hide() PSFmain2:Hide() PSFmain3:Hide() end end
 end)
 
 -- mouseover the "m" button
@@ -578,17 +585,14 @@ SlashCmdList["MMENU"] = function(msg)
 end
 
 -- Tukui Datatext
-if TukuiCF["datatext"].mmenu and TukuiCF["datatext"].mmenu > 0 and IsAddOnLoaded("Tukui") and mmconfig.tukuisupport then
-	menu:ClearAllPoints()
-	-- if IsAddOnLoaded("Duffed") then
-		-- menu:SetPoint("BOTTOMRIGHT", TukuiActionBarBackground, "TOPRIGHT", 0, 4)
-	-- else
+if IsAddOnLoaded("Tukui") and mmconfig.tukuisupport then
+	if TukuiCF["datatext"].mmenu and TukuiCF["datatext"].mmenu > 0 then
+		menu:ClearAllPoints()
 		menu:SetPoint("BOTTOM", mmdatatextbutton, "TOP", 0, 4)
-	-- end
-	openmenubutton:SetPoint("CENTER", mmdatatextbutton)
-	openmenubutton:SetHeight(0.1)
-	openmenubutton:SetWidth(0.1)
-	openmenubutton:SetFrameStrata("BACKGROUND")
-	openmenubutton:SetFrameLevel(0)
-	openmenubutton:SetMovable(false)
+		openmenubutton:SetPoint("CENTER", mmdatatextbutton)
+		openmenubutton:SetSize(.1,.1)
+		openmenubutton:SetFrameStrata("BACKGROUND")
+		openmenubutton:SetFrameLevel(0)
+		openmenubutton:SetMovable(false)
+	end
 end
