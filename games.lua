@@ -15,17 +15,18 @@ local mmenugames = 0 -- Lets go!
 -- Setpoint function
 --------------------------------------------------------------------------------------
 local function gamesetpoint(f)
+	f:ClearAllPoints()
 	if mmconfig.menudirection == true then
 		if mmenugames == 0 then
-			f:SetPoint("TOP", gamemenu, "TOP", 0, -2)
+			f:SetPoint("TOPLEFT", gamemenu, "TOPLEFT", 2, -2)
 		else
-			f:SetPoint("TOP", gamemenu, "TOP", 0, -((mmenugames * mmconfig.addonbuttonheight) + 2 + (mmenugames*2)))
+			f:SetPoint("TOPLEFT", gamemenu, "TOPLEFT", 2, -((mmenugames * mmconfig.addonbuttonheight) + 2 + (mmenugames*2)))
 		end
 	else
 		if mmenugames == 0 then
-			f:SetPoint("BOTTOM", gamemenu, "BOTTOM", 0, 2)
+			f:SetPoint("BOTTOMLEFT", gamemenu, "BOTTOMLEFT", 2, 2)
 		else
-			f:SetPoint("BOTTOM", gamemenu, "BOTTOM", 0, ((mmenugames * mmconfig.addonbuttonheight) + 2 + (mmenugames*2)))
+			f:SetPoint("BOTTOMLEFT", gamemenu, "BOTTOMLEFT", 2, ((mmenugames * mmconfig.addonbuttonheight) + 2 + (mmenugames*2)))
 		end
 	end
 end

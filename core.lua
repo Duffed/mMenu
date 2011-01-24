@@ -105,15 +105,15 @@ function mMenu.CreateAddonButton(f, arg1)
 	
 	if mmconfig.menudirection == true then
 		if mmenuaddons == 0 then
-			f:SetPoint("TOP", menu, "TOP", 0, -2)
+			f:SetPoint("TOPLEFT", menu, "TOPLEFT", 2, -2)
 		else
-			f:SetPoint("TOP", menu, "TOP", 0, -((mmenuaddons * mmconfig.addonbuttonheight) + 2 + (mmenuaddons*2)))
+			f:SetPoint("TOPLEFT", menu, "TOPLEFT", 2, -((mmenuaddons * mmconfig.addonbuttonheight) + 2 + (mmenuaddons*2)))
 		end
 	else
 		if mmenuaddons == 0 then
-			f:SetPoint("BOTTOM", menu, "BOTTOM", 0, 2)
+			f:SetPoint("BOTTOMLEFT", menu, "BOTTOMLEFT", 2, 2)
 		else
-			f:SetPoint("BOTTOM", menu, "BOTTOM", 0, ((mmenuaddons * mmconfig.addonbuttonheight) + 2 + (mmenuaddons*2)))
+			f:SetPoint("BOTTOMLEFT", menu, "BOTTOMLEFT", 2, ((mmenuaddons * mmconfig.addonbuttonheight) + 2 + (mmenuaddons*2)))
 		end
 	end
 	
@@ -386,9 +386,10 @@ if mmconfig.mList.ReloadUI then
 	
 		-- "Sure?" Button
 		surebutton = CreateFrame("Button", nil, reloaduibutton)
-		mMenu.CreateAddonButton(surebutton, "Ok|r")
-		surebutton:SetWidth(24)
-		surebutton:SetPoint("LEFT", reloaduibutton, "RIGHT", 5, 0)
+		mMenu.CreateAddonButton(surebutton, "!|r")
+		surebutton:SetWidth(mmconfig.addonbuttonheight+1)
+		surebutton:ClearAllPoints()
+		surebutton:SetPoint("LEFT", reloaduibutton, "RIGHT", 2, 0)
 		surebutton:RegisterForClicks("AnyUp")
 		surebutton:Hide()
 		
@@ -398,7 +399,14 @@ if mmconfig.mList.ReloadUI then
 	
 	--open/close
 	reloaduibutton:SetScript("OnMouseUp", function() end)
-	reloaduibutton:SetScript("OnMouseDown", function() ToggleFrame(surebutton) end)
+	reloaduibutton:SetScript("OnMouseDown", function() 
+		ToggleFrame(surebutton) 
+		if surebutton:IsShown() then
+			reloaduibutton:SetWidth(mmconfig.addonbuttonwidth - (surebutton:GetWidth()+2))
+		else
+			reloaduibutton:SetWidth(mmconfig.addonbuttonwidth)
+		end
+	end)
 		
 	mmenuaddons = mmenuaddons + 1
 end
