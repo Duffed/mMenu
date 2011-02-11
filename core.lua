@@ -1,3 +1,4 @@
+if IsAddOnLoaded("Tukui") then local T, C, L = unpack(Tukui) end
 --------------------------------------------------------------------------------------
 -- "mMenu" - Addon Toggle Menu
 -- written by magges
@@ -10,8 +11,8 @@ function mMenu.skinbutton(f)
 		tileSize = 0, edgeSize = 1, 
 		insets = { left = -1, right = -1, top = -1, bottom = -1}
 	})
-	f:SetBackdropColor(unpack(mmconfig.configBackDropColor))
-	f:SetBackdropBorderColor(unpack(mmconfig.configBackDropBorderColor))
+	f:SetBackdropColor(unpack(mmconfig.BackDropColor))
+	f:SetBackdropBorderColor(unpack(mmconfig.BackDropBorderColor))
 	f:SetSize(mmconfig.buttonwidth, mmconfig.buttonheight)
 end
 
@@ -22,21 +23,21 @@ function mMenu.skintext(f, arg1)
 	f.text = f:CreateFontString(nil, "LOW")
 	f.text:SetPoint("CENTER", 1, 0)
 	f.text:SetFont(mmconfig.font, mmconfig.fontheight)
-	f.text:SetText(mmconfig.textcolor..arg1)
+	f.text:SetText(mmconfig.color_text..arg1)
 	
 	--(mouseover)
 	f:SetScript("OnEnter", function()
 		UIFrameFadeIn(f, mmconfig.fadetime, 0.4, 1)
-		f.text:SetText(mmconfig.textcolorclicked..arg1)
+		f.text:SetText(mmconfig.mouseover_text..arg1)
 		f:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
 	end)
 	f:SetScript("OnLeave", function()
 		UIFrameFadeOut(f, mmconfig.fadetime, 1, 0.4)
-		f.text:SetText(mmconfig.textcolor..arg1)
-		f:SetBackdropColor(unpack(mmconfig.configBackDropColor))
+		f.text:SetText(mmconfig.color_text..arg1)
+		f:SetBackdropColor(unpack(mmconfig.BackDropColor))
 	end)
 	
-	if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then TukuiDB.CreateShadow(f) end
+	if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then f:CreateShadow("Default") end
 end
 
 -- the menu open button
@@ -44,7 +45,7 @@ local openmenubutton = CreateFrame("Frame", "OpenMenuButton", UIParent)
 mMenu.skinbutton(openmenubutton)
 openmenubutton:SetPoint("CENTER",0,0)
 openmenubutton:SetMovable(true)
-if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then TukuiDB.CreateShadow(openmenubutton) end
+if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then openmenubutton:CreateShadow("Default") end
 
 -- (texture)
 openmenubutton.texture = openmenubutton:CreateTexture(nil, "OVERLAY")
@@ -52,6 +53,7 @@ if mmconfig.buttonwidth > 13 then
 	openmenubutton.texture:SetPoint("CENTER", openmenubutton, "CENTER")
 	openmenubutton.texture:SetSize(20, 20)
 	openmenubutton.texture:SetTexture("Interface\\addons\\mMenu\\button")
+	openmenubutton.texture:SetVertexColor(unpack(mmconfig.color))
 	openmenubutton.texture:SetAlpha(1)
 end
 openmenubutton.texturemo = openmenubutton:CreateTexture(nil, "OVERLAY")
@@ -59,7 +61,7 @@ if mmconfig.buttonwidth > 13 then
 	openmenubutton.texturemo:SetPoint("CENTER", openmenubutton, "CENTER")
 	openmenubutton.texturemo:SetSize(20, 20)
 	openmenubutton.texturemo:SetTexture("Interface\\addons\\mMenu\\button")
-	openmenubutton.texturemo:SetVertexColor(unpack(mmconfig.mouseoverm))
+	openmenubutton.texturemo:SetVertexColor(unpack(mmconfig.mouseover_color))
 	openmenubutton.texturemo:SetAlpha(0)
 end
 
@@ -73,7 +75,7 @@ else
 end
 menu:SetFrameLevel(2)
 menu:SetFrameStrata("HIGH")
-if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then TukuiDB.CreateShadow(menu) end
+if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then menu:CreateShadow("Default") end
 menu:Hide()
 
 -- "close all" button
@@ -129,15 +131,15 @@ function mMenu.CreateAddonButton(f, arg1)
 	f.text:SetFont(mmconfig.font, mmconfig.fontheight)
 	f.text:SetWidth(mmconfig.addonbuttonwidth - 8)
 	f.text:SetPoint("CENTER", f, "CENTER")
-	f.text:SetText(arg1)
+	f.text:SetText(mmconfig.color_text..arg1)
 
 	f:SetScript("OnEnter", function()
-		f.text:SetText(mmconfig.textcolorclicked..arg1)
+		f.text:SetText(mmconfig.mouseover_text..arg1)
 		f:SetBackdropColor(unpack(mmconfig.mouseoverBackdrop))
 	end)
 	f:SetScript("OnLeave", function()
-		f.text:SetText(mmconfig.textcolor..arg1)
-		f:SetBackdropColor(unpack(mmconfig.configBackDropColor))
+		f.text:SetText(mmconfig.color_text..arg1)
+		f:SetBackdropColor(unpack(mmconfig.BackDropColor))
 	end)
 end
 
@@ -164,7 +166,7 @@ if (mmconfig.mList.Bags) then
 	
 	--open/close
 	bagsbutton:SetScript("OnMouseDown", function() OpenAllBags() end)
-
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -181,7 +183,7 @@ if IsAddOnLoaded("VuhDo") and (mmconfig.mList.VuhDo) then
 			ToggleFrame(VuhDoBuffWatchMainFrame)
 		end
 	end)
-
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -231,6 +233,7 @@ if IsAddOnLoaded("Skada") and (mmconfig.mList.Skada) then
 	skadabutton:SetScript("OnMouseDown", function() Skada:ToggleWindow() end)
 	
 	disabled = true -- skada specific .. its more a test but better dont delete it
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -276,7 +279,6 @@ if IsAddOnLoaded("Recount") and (mmconfig.mList.Recount) then
 		end
 	end)
 	
-	--position
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -308,9 +310,9 @@ if IsAddOnLoaded("TukuiMarkBar") and (mmconfig.mList.Raidmarkbar) then
     mMenu.CreateAddonButton(markbarbutton, "Raidmarks|r") 
       
     --open/close 
-    markbarbutton:SetScript("OnMouseDown", function() ToggleFrame(MarkBarBackground) end) 
-           
-    mmenuaddons = mmenuaddons + 1 
+    markbarbutton:SetScript("OnMouseDown", function() ToggleFrame(MarkBarBackground) end)
+	
+	mmenuaddons = mmenuaddons + 1
 end
 
 -- Atlasloot --------------------------
@@ -320,7 +322,18 @@ if IsAddOnLoaded("AtlasLoot") and (mmconfig.mList.Atlas) then
 	
 	--open/close
 	atlasbutton:SetScript("OnMouseDown", function() ToggleFrame(AtlasLootDefaultFrame) end)
-		
+	
+	mmenuaddons = mmenuaddons + 1
+end
+
+-- Altoholic --------------------------
+if IsAddOnLoaded("Altoholic") and (mmconfig.mList.Altoholic) then
+	altoholicbutton = CreateFrame("Frame", "AltoholicButton", menu)
+	mMenu.CreateAddonButton(AltoholicButton, "Altoholic|r")
+	
+	--open/close
+	altoholicbutton:SetScript("OnMouseDown", function() ToggleFrame(AltoholicFrame) end)
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -331,7 +344,7 @@ if IsAddOnLoaded("Cascade") and (mmconfig.mList.Cascade) then
 	
 	--open/close
 	cascadebutton:SetScript("OnMouseDown", function() ToggleFrame(CascadeFrame) end)
-		
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -342,7 +355,7 @@ if IsAddOnLoaded("Arh") and (mmconfig.mList.Arh) then
 	
 	--open/close
 	arhbutton:SetScript("OnMouseDown", function() ToggleFrame(Arh_MainFrame) end)
-		
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -353,7 +366,7 @@ if IsAddOnLoaded("PhoenixStyle") and (mmconfig.mList.PhoenixStyle) then
 	
 	--open/close
 	phoenixbutton:SetScript("OnMouseDown", function() ToggleFrame(PSFmain1) ToggleFrame(PSFmain2) ToggleFrame(PSFmain3) end)
-		
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -364,7 +377,7 @@ if IsAddOnLoaded("Tukui_ConfigUI") and IsAddOnLoaded("Tukui") and (mmconfig.mLis
 	
 	--open/close
 	tukuiconfig:SetScript("OnMouseDown", function() SlashCmdList["CONFIG"]() end)
-		
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -375,7 +388,7 @@ if IsAddOnLoaded("ElvUI_ConfigUI") and IsAddOnLoaded("ElvUI") and (mmconfig.mLis
 	
 	--open/close
 	elvconfig:SetScript("OnMouseDown", function() SlashCmdList["CONFIG"]() end)
-		
+	
 	mmenuaddons = mmenuaddons + 1
 end
 
@@ -407,7 +420,7 @@ if mmconfig.mList.ReloadUI then
 			reloaduibutton:SetWidth(mmconfig.addonbuttonwidth)
 		end
 	end)
-		
+	
 	mmenuaddons = mmenuaddons + 1
 end
 --------------------------------------------------------------------------------------
@@ -477,7 +490,7 @@ openmenubutton:SetScript("OnMouseDown", function()
 			menu:Hide()
 			openmenubutton.texturemo:SetAlpha(0)
 			openmenubutton.texture:SetAlpha(1)
-			openmenubutton:SetBackdropColor(unpack(mmconfig.configBackDropColor))
+			openmenubutton:SetBackdropColor(unpack(mmconfig.BackDropColor))
 		else
 			menu:Show()	
 			openmenubutton.texturemo:SetAlpha(1)
@@ -502,31 +515,32 @@ end)
 open:SetScript("OnMouseUp", function()
 	if 										(mmconfig.openall.WorldMap) then	WorldMapFrame:Show() end
 	if 										(mmconfig.openall.Bags) then		OpenAllBags() end
-	if IsAddOnLoaded("VuhDo") then if		(mmconfig.openall.VuhDo) then		SlashCmdList["VUHDO"]("show") end end
-	if IsAddOnLoaded("Grid") then if 		(mmconfig.openall.Grid) then 		GridLayoutFrame:Show() end end -- Grid
-	if IsAddOnLoaded("Grid2") then if 		(mmconfig.openall.Grid) then 		Grid2LayoutFrame:Show() end end -- Grid2
-	if IsAddOnLoaded("HealBot") then if 	(mmconfig.openall.HealBot) then 
+	if IsAddOnLoaded("VuhDo") and			(mmconfig.openall.VuhDo) then		SlashCmdList["VUHDO"]("show") end
+	if IsAddOnLoaded("Grid") and	 		(mmconfig.openall.Grid) then 		GridLayoutFrame:Show() end -- Grid
+	if IsAddOnLoaded("Grid2") and	 		(mmconfig.openall.Grid) then 		Grid2LayoutFrame:Show() end -- Grid2
+	if IsAddOnLoaded("HealBot") and		 	(mmconfig.openall.HealBot) then 
 												if HealBot_Options_DisableHealBot:GetChecked() then
 													HealBot_Options_DisableHealBot:SetChecked(0)
 													HealBot_Options_ToggleHealBot(0) 
-												end end end
-	if IsAddOnLoaded("Numeration") then if	(mmconfig.openall.Numeration) then	NumerationFrame:Show() end end
-	if IsAddOnLoaded("Skada") then if 		(mmconfig.openall.Skada) then 		Skada:SetActive(disabled) end end
-	if IsAddOnLoaded("Omen") then if 		(mmconfig.openall.Omen) then		Omen:Toggle(true) end end
-	if IsAddOnLoaded("AtlasLoot") then if 	(mmconfig.openall.Atlas) then 		AtlasLootDefaultFrame:Show() end end
-	if IsAddOnLoaded("Recount") then if 	(mmconfig.openall.Recount) then 	Recount.MainWindow:Show();Recount:RefreshMainWindow() end end
-	if IsAddOnLoaded("TinyDPS") then if 	(mmconfig.openall.TinyDPS) then 	tdpsFrame:Show() end end
-	if IsAddOnLoaded("DBM-Code") then if	(mmconfig.openall.DBM) then			DBM:LoadGUI() end end
-	if IsAddOnLoaded("Cascade") then if		(mmconfig.openall.Cascade) then		CascadeFrame:Show() end end
-	if IsAddOnLoaded("Tukui_ConfigUI") then if (mmconfig.openall.TukuiConfig) then 
+												end end
+	if IsAddOnLoaded("Numeration") and		(mmconfig.openall.Numeration) then	NumerationFrame:Show() end
+	if IsAddOnLoaded("Skada") and 			(mmconfig.openall.Skada) then 		Skada:SetActive(disabled) end
+	if IsAddOnLoaded("Omen") and 			(mmconfig.openall.Omen) then		Omen:Toggle(true) end
+	if IsAddOnLoaded("AtlasLoot") and 		(mmconfig.openall.Atlas) then 		AtlasLootDefaultFrame:Show() end
+	if IsAddOnLoaded("Recount") and			(mmconfig.openall.Recount) then 	Recount.MainWindow:Show();Recount:RefreshMainWindow() end
+	if IsAddOnLoaded("TinyDPS") and	 		(mmconfig.openall.TinyDPS) then 	tdpsFrame:Show() end
+	if IsAddOnLoaded("DBM-Code") and		(mmconfig.openall.DBM) then			DBM:LoadGUI() end
+	if IsAddOnLoaded("Cascade") and			(mmconfig.openall.Cascade) then		CascadeFrame:Show() end
+	if IsAddOnLoaded("Tukui_ConfigUI") and	(mmconfig.openall.TukuiConfig) then 
 												if not TukuiConfigUI then SlashCmdList["CONFIG"]()
-												else TukuiConfigUI:Show() end end end
-	if IsAddOnLoaded("ElvUI_ConfigUI") then if (mmconfig.openall.TukuiConfig) then 
+												else TukuiConfigUI:Show() end end
+	if IsAddOnLoaded("ElvUI_ConfigUI") and	(mmconfig.openall.TukuiConfig) then 
 												if not ElvuiConfigUI then SlashCmdList["CONFIG"]()
-												else ElvuiConfigUI:Show() end end end
-	if IsAddOnLoaded("TukuiMarkBar") then if (mmconfig.openall.Raidmarkbar) then MarkBarBackground:Show() end end
-	if IsAddOnLoaded("Arh") then if 		(mmconfig.openall.Arh) then Arh_MainFrame:Show() end end
-	if IsAddOnLoaded("PhoenixStyle") then if (mmconfig.openall.PhoenixStyle) then PSFmain1:Show() PSFmain2:Show() PSFmain3:Show() end end
+												else ElvuiConfigUI:Show() end end
+	if IsAddOnLoaded("TukuiMarkBar") and	(mmconfig.openall.Raidmarkbar) then MarkBarBackground:Show() end
+	if IsAddOnLoaded("Arh") and 	 		(mmconfig.openall.Arh) then Arh_MainFrame:Show() end
+	if IsAddOnLoaded("PhoenixStyle") and	(mmconfig.openall.PhoenixStyle) then PSFmain1:Show() PSFmain2:Show() PSFmain3:Show() end
+	if IsAddOnLoaded("Altoholic") and		(mmconfig.openall.Altoholic) then AltoholicFrame:Show() end
 end)
 
 -- close all button
@@ -536,31 +550,32 @@ end)
 close:SetScript("OnMouseUp", function()
 	if 										(mmconfig.closeall.WorldMap) then	WorldMapFrame:Hide() end
 	if 										(mmconfig.closeall.Bags) then		CloseAllBags() end
-	if IsAddOnLoaded("VuhDo") then if		(mmconfig.closeall.VuhDo) then		SlashCmdList["VUHDO"]("hide") end end
-	if IsAddOnLoaded("Grid") then if 		(mmconfig.closeall.Grid) then 		GridLayoutFrame:Hide() end end -- Grid
-	if IsAddOnLoaded("Grid2") then if 		(mmconfig.closeall.Grid) then 		Grid2LayoutFrame:Hide() end end -- Grid2
-	if IsAddOnLoaded("HealBot") then if 	(mmconfig.closeall.HealBot) then 
+	if IsAddOnLoaded("VuhDo") and			(mmconfig.closeall.VuhDo) then		SlashCmdList["VUHDO"]("hide") end
+	if IsAddOnLoaded("Grid") and	 		(mmconfig.closeall.Grid) then 		GridLayoutFrame:Hide() end -- Grid
+	if IsAddOnLoaded("Grid2") and	 		(mmconfig.closeall.Grid) then 		Grid2LayoutFrame:Hide() end -- Grid2
+	if IsAddOnLoaded("HealBot") and	 		(mmconfig.closeall.HealBot) then 
 												if not HealBot_Options_DisableHealBot:GetChecked() then
 													HealBot_Options_DisableHealBot:SetChecked(1)
 													HealBot_Options_ToggleHealBot(1) 
-												end end end
-	if IsAddOnLoaded("Numeration") then if	(mmconfig.closeall.Numeration) then	NumerationFrame:Hide() end end
-	if IsAddOnLoaded("Skada") then if 		(mmconfig.closeall.Skada) then 		Skada:SetActive(enable) end end
-	if IsAddOnLoaded("Omen") then if 		(mmconfig.closeall.Omen) then 		Omen:Toggle(false) end end
-	if IsAddOnLoaded("AtlasLoot") then if 	(mmconfig.closeall.Atlas) then 		AtlasLootDefaultFrame:Hide() end end
-	if IsAddOnLoaded("Recount") then if 	(mmconfig.closeall.Recount) then if Recount.MainWindow:IsShown() then Recount.MainWindow:Hide() end end end
-	if IsAddOnLoaded("TinyDPS") then if 	(mmconfig.closeall.TinyDPS) then 	tdpsFrame:Hide() end end
-	if IsAddOnLoaded("DBM-Core") then if	(mmconfig.closeall.DBM) then		if DBM_GUI_OptionsFrame then DBM_GUI_OptionsFrame:Hide() end end end
-	if IsAddOnLoaded("Cascade") then if		(mmconfig.closeall.Cascade) then	CascadeFrame:Hide() end end
-	if IsAddOnLoaded("Tukui_ConfigUI") then if (mmconfig.closeall.TukuiConfig) then
+												end end
+	if IsAddOnLoaded("Numeration") and		(mmconfig.closeall.Numeration) then	NumerationFrame:Hide() end
+	if IsAddOnLoaded("Skada") and			(mmconfig.closeall.Skada) then 		Skada:SetActive(enable) end
+	if IsAddOnLoaded("Omen") and	 		(mmconfig.closeall.Omen) then 		Omen:Toggle(false) end
+	if IsAddOnLoaded("AtlasLoot") and	 	(mmconfig.closeall.Atlas) then 		AtlasLootDefaultFrame:Hide() end
+	if IsAddOnLoaded("Recount") and	 		(mmconfig.closeall.Recount) then if Recount.MainWindow:IsShown() then Recount.MainWindow:Hide() end end
+	if IsAddOnLoaded("TinyDPS") and		 	(mmconfig.closeall.TinyDPS) then 	tdpsFrame:Hide() end
+	if IsAddOnLoaded("DBM-Core") and		(mmconfig.closeall.DBM) then		if DBM_GUI_OptionsFrame then DBM_GUI_OptionsFrame:Hide() end end
+	if IsAddOnLoaded("Cascade") and			(mmconfig.closeall.Cascade) then	CascadeFrame:Hide() end
+	if IsAddOnLoaded("Tukui_ConfigUI") and	(mmconfig.closeall.TukuiConfig) then
 												if not TukuiConfigUI then return
-												else TukuiConfigUI:Hide() end end end
-	if IsAddOnLoaded("ElvUI_ConfigUI") then if (mmconfig.closeall.TukuiConfig) then
+												else TukuiConfigUI:Hide() end end
+	if IsAddOnLoaded("ElvUI_ConfigUI") and	(mmconfig.closeall.TukuiConfig) then
 												if not ElvuiConfigUI then return
-												else ElvuiConfigUI:Hide() end end end									
-	if IsAddOnLoaded("TukuiMarkBar") then if (mmconfig.closeall.Raidmarkbar) then MarkBarBackground:Hide() end end
-	if IsAddOnLoaded("Arh") then if 		 (mmconfig.closeall.Arh) then Arh_MainFrame:Hide() end end
-	if IsAddOnLoaded("PhoenixStyle") then if (mmconfig.closeall.PhoenixStyle) then PSFmain1:Hide() PSFmain2:Hide() PSFmain3:Hide() end end
+												else ElvuiConfigUI:Hide() end end									
+	if IsAddOnLoaded("TukuiMarkBar") and	(mmconfig.closeall.Raidmarkbar) then MarkBarBackground:Hide() end
+	if IsAddOnLoaded("Arh") and				(mmconfig.closeall.Arh) then Arh_MainFrame:Hide() end
+	if IsAddOnLoaded("PhoenixStyle") and	(mmconfig.closeall.PhoenixStyle) then PSFmain1:Hide() PSFmain2:Hide() PSFmain3:Hide() end
+	if IsAddOnLoaded("Altoholic") and		(mmconfig.closeall.Altoholic) then AltoholicFrame:Hide() end
 end)
 
 -- mouseover the "m" button
@@ -584,17 +599,18 @@ SlashCmdList["MMENU"] = function(msg)
 	if msg == "reset" then
 		openmenubutton:ClearAllPoints()
 		openmenubutton:SetPoint("CENTER", UIParent, "CENTER", 0,0)
-		print(mmconfig.textcolorclicked.."mMenu|r "..mmconfig.textcolor.."- Position reset!")
+		print(mmconfig.mouseover_text.."mMenu|r "..mmconfig.color_text.."- Position reset!")
 	else
-		print(mmconfig.textcolorclicked.."mMenu|r "..mmconfig.textcolor.."- Help:") 
-		print(mmconfig.textcolorclicked.."-|r "..mmconfig.textcolor.."Move while holding Shift.")
-		print(mmconfig.textcolorclicked.."-|r "..mmconfig.textcolor.."Reset position with|r |cff9b9b9b'/mm reset'|r")
+		print(mmconfig.mouseover_text.."mMenu|r "..mmconfig.color_text.."- Help:") 
+		print(mmconfig.mouseover_text.."-|r "..mmconfig.color_text.."Move while holding Shift.")
+		print(mmconfig.mouseover_text.."-|r "..mmconfig.color_text.."Reset position with|r |cff9b9b9b'/mm reset'|r")
 	end
 end
 
 -- Tukui Datatext
 if IsAddOnLoaded("Tukui") and mmconfig.tukuisupport then
-	if TukuiCF["datatext"].mmenu and TukuiCF["datatext"].mmenu > 0 then
+	local T, C, L = unpack(Tukui)
+	if C["datatext"].mmenu and C["datatext"].mmenu > 0 then
 		menu:ClearAllPoints()
 		menu:SetPoint("BOTTOM", mmdatatextbutton, "TOP", 0, 4)
 		openmenubutton:SetPoint("CENTER", mmdatatextbutton)

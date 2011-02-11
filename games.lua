@@ -8,7 +8,7 @@ if mmconfig.menudirection == true then
 else
 	gamemenu:SetPoint("BOTTOM", menu, "TOP", 0, 4)
 end
-if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then TukuiDB.CreateShadow(gamemenu) end
+if IsAddOnLoaded("Tukui") and TukuiMinimap.shadow then gamemenu:CreateShadow("Default") end
 --------------------------------------------------------------------------------------
 local mmenugames = 0 -- Lets go!
 --------------------------------------------------------------------------------------
